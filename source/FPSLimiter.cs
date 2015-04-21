@@ -97,6 +97,9 @@ namespace KerboKatz
           case 60:
             QualitySettings.vSyncCount = 1;
             break;
+          default:
+            QualitySettings.vSyncCount = 0;
+            break;
         }
       }
       else
