@@ -19,6 +19,8 @@ namespace KerboKatz
     private GUIStyle numberFieldStyle;
     private GUIStyle horizontalSlider;
     private GUIStyle horizontalSliderThumb;
+    private GUIStyle toggleStyle;
+    private bool useVSync;
     private void InitStyle()
     {
       backgroundFPS = currentSettings.getFloat("backgroundFPS");
@@ -27,7 +29,7 @@ namespace KerboKatz
       settingsWindowStyle.fixedWidth = 300;
 
       textStyle = new GUIStyle(HighLogic.Skin.label);
-      textStyle.fixedWidth = 232;
+      textStyle.fixedWidth = 227;
       textStyle.margin.left = 10;
 
       buttonStyle = new GUIStyle(HighLogic.Skin.button);
@@ -45,6 +47,8 @@ namespace KerboKatz
       horizontalSlider.margin.top += 7;
 
       horizontalSliderThumb = new GUIStyle(HighLogic.Skin.horizontalSliderThumb);
+
+      toggleStyle = new GUIStyle(HighLogic.Skin.toggle);
 
       initStyle = true;
     }
@@ -65,24 +69,56 @@ namespace KerboKatz
       activeFPS = createSlider("Focused FPS","FPS limit while the game is active. ", activeFPS, 5, maxActiveFPS);
       backgroundFPS = createSlider("Background FPS","FPS limit while the game isn't focused. Set to 0 to pause any simulation anything else will cause the game to run slower.", backgroundFPS, 0, maxActiveFPS, activeFPS);
 
-      GUILayout.BeginHorizontal();
-      Utilities.UI.createLabel("CurrentFPS", textStyle);
-      Utilities.UI.createLabel(Utilities.round(lastFPS, 1).ToString(), numberFieldStyle);
 
-      GUILayout.EndHorizontal();
+      createVsyncOption();
+      showCurrentFPS();
 
+      createButtons();
+      GUILayout.EndVertical();
+      Utilities.UI.updateTooltipAndDrag();
+    }
+
+    private void createButtons()
+    {
       GUILayout.BeginHorizontal();
-      GUILayout.FlexibleSpace();
       if (Utilities.UI.createButton("Save", buttonStyle))
       {
+        currentSettings.set("useVSync", useVSync);
         currentSettings.set("activeFPS", activeFPS);
         currentSettings.set("backgroundFPS", backgroundFPS);
         focusStatusBool = true;
       }
       GUILayout.FlexibleSpace();
+      if (Utilities.UI.createButton("Close", buttonStyle))
+      {
+        toggleSettings();
+      }
       GUILayout.EndHorizontal();
-      GUILayout.EndVertical();
-      Utilities.UI.updateTooltipAndDrag();
+    }
+
+    private void showCurrentFPS()
+    {
+      GUILayout.BeginHorizontal();
+      Utilities.UI.createLabel("CurrentFPS", textStyle);
+      Utilities.UI.createLabel(Utilities.round(lastFPS, 1).ToString(), numberFieldStyle);
+
+      GUILayout.EndHorizontal();
+    }
+
+    private void createVsyncOption()
+    {
+      GUILayout.BeginHorizontal();
+      Utilities.UI.createLabel("Use VSync", textStyle, "If you turn on this option vertical synchronization will be used to reduce screen tearing. This option will only take effect at 30 and 60 fps.");
+      GUILayout.FlexibleSpace();
+      if (Utilities.UI.createToggle("", useVSync, toggleStyle))
+      {
+        useVSync = true;
+      }
+      else
+      {
+        useVSync = false;
+      }
+      GUILayout.EndHorizontal();
     }
 
     private float createSlider(string label, string tooltip, float current, float minValue, float maxValue, float limitValue = 0)

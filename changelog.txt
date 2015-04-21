@@ -1,2 +1,6 @@
+v 1.0.1
+ * Added:
+  * Vsync option
+  * Button to close the window
 v 1.0.0
  * Initial release

@@ -31,6 +31,9 @@ namespace KerboKatz
       currentSettings.setDefault("showSettings", "false");
       currentSettings.setDefault("settingsSettingsRectX", "0");
       currentSettings.setDefault("settingsSettingsRectY", "0");
+      currentSettings.setDefault("activeFPS", "35");
+      currentSettings.setDefault("backgroundFPS", "10");
+      currentSettings.setDefault("useVSync", "false");
     }
     public override void OnGuiAppLauncherReady()
     {
@@ -82,6 +85,21 @@ namespace KerboKatz
         else
         {
           Application.runInBackground = false;
+        }
+      }
+      if (currentSettings.getBool("useVSync"))
+      {
+        switch (targetFrameRate)
+        {
+          case 30:
+            QualitySettings.vSyncCount = 2;
+            break;
+          case 60:
+            QualitySettings.vSyncCount = 1;
+            break;
+          default:
+            QualitySettings.vSyncCount = 0;
+            break;
         }
       }
       Application.targetFrameRate = targetFrameRate;
