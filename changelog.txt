@@ -1,3 +1,9 @@
+v 1.1
+ * Added:
+  * FPS Viewer: Ability  to add a overlay to show the fps over the last second
+  * Editor Utilities: Ability to switch between VAB/SPH camera
+ * Mics:
+  * KSP 1.0 recompile
 v 1.0.1
  * Added:
   * Vsync option

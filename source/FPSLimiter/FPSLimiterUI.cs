@@ -1,15 +1,13 @@
-﻿using KerboKatz.Classes;
-using System.Collections.Generic;
+﻿using KerboKatz.Extensions;
 using UnityEngine;
-using KerboKatz;
 
 namespace KerboKatz
 {
   public partial class FPSLimiter : KerboKatzBase
   {
     private bool initStyle;
-    private int settingsWindowID = 971305;
-    private Rect settingsWindowRect = new Rect();
+    private int settingsWindowID = 1702001001;
+    private Rectangle settingsWindowRect = new Rectangle(Rectangle.updateType.Cursor);
     private float backgroundFPS;
     private GUIStyle settingsWindowStyle;
     private GUIStyle textStyle;
@@ -21,6 +19,7 @@ namespace KerboKatz
     private GUIStyle horizontalSliderThumb;
     private GUIStyle toggleStyle;
     private bool useVSync;
+    private GUIStyle sortTextStyle;
     private void InitStyle()
     {
       backgroundFPS = currentSettings.getFloat("backgroundFPS");
@@ -50,6 +49,10 @@ namespace KerboKatz
 
       toggleStyle = new GUIStyle(HighLogic.Skin.toggle);
 
+      Utilities.UI.getTooltipStyle();
+      sortTextStyle = new GUIStyle(Utilities.UI.sortTextStyle);
+      sortTextStyle.padding.left += 6;
+      sortTextStyle.fixedWidth += 50;
       initStyle = true;
     }
 
@@ -65,12 +68,11 @@ namespace KerboKatz
     {
       maxActiveFPS = 120;
       GUILayout.BeginVertical();
-
-      activeFPS = createSlider("Focused FPS","FPS limit while the game is active. ", activeFPS, 5, maxActiveFPS);
-      backgroundFPS = createSlider("Background FPS","FPS limit while the game isn't focused. Set to 0 to pause any simulation anything else will cause the game to run slower.", backgroundFPS, 0, maxActiveFPS, activeFPS);
-
+      activeFPS = Utilities.UI.createSlider("Focused FPS", activeFPS, 5, maxActiveFPS, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game is active.");
+      backgroundFPS = Utilities.UI.createSlider("Background FPS", backgroundFPS, 0, maxActiveFPS, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game isn't focused. Set to 0 to pause any simulation anything else will cause the game to run slower.", activeFPS);
 
       createVsyncOption();
+      Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected, sortTextStyle);
       showCurrentFPS();
 
       createButtons();
@@ -86,12 +88,13 @@ namespace KerboKatz
         currentSettings.set("useVSync", useVSync);
         currentSettings.set("activeFPS", activeFPS);
         currentSettings.set("backgroundFPS", backgroundFPS);
+        updateToolbarBool();
         focusStatusBool = true;
       }
       GUILayout.FlexibleSpace();
       if (Utilities.UI.createButton("Close", buttonStyle))
       {
-        toggleSettings();
+        onToolbar();
       }
       GUILayout.EndHorizontal();
     }
@@ -100,7 +103,7 @@ namespace KerboKatz
     {
       GUILayout.BeginHorizontal();
       Utilities.UI.createLabel("CurrentFPS", textStyle);
-      Utilities.UI.createLabel(Utilities.round(lastFPS, 1).ToString(), numberFieldStyle);
+      Utilities.UI.createLabel(Utilities.round(FPS.currentFPS, 1).ToString(), numberFieldStyle);
 
       GUILayout.EndHorizontal();
     }
@@ -119,32 +122,6 @@ namespace KerboKatz
         useVSync = false;
       }
       GUILayout.EndHorizontal();
-    }
-
-    private float createSlider(string label, string tooltip, float current, float minValue, float maxValue, float limitValue = 0)
-    {
-      Utilities.UI.createLabel(label, textStyle,tooltip);
-      GUILayout.BeginHorizontal();
-      GUILayout.BeginVertical();
-      current = Utilities.round(GUILayout.HorizontalSlider(current, minValue, maxValue, horizontalSlider, horizontalSliderThumb), 0);
-      GUILayout.EndVertical();
-      current = Utilities.round(Utilities.toFloat(Utilities.getOnlyNumbers(GUILayout.TextField(current.ToString(), numberFieldStyle))), 0);
-      if (limitValue == 0)
-      {
-        if (current > maxValue)
-        {
-          current = maxValue;
-        }
-      }
-      else
-      {
-        if (current > limitValue)
-        {
-          current = limitValue;
-        }
-      }
-      GUILayout.EndHorizontal();
-      return current;
     }
   }
 }
