@@ -11,6 +11,16 @@ namespace KerboKatz
     private float heading;
     private float pitch;
     private bool vabControls = true;
+    private Vector3 camFocus = new Vector3(0, 0, 0);
+    public float MouseSensitivity = 0.002f;
+    private VABCamera VABCam;
+    private float rotationSpeed = 10;
+    private float HeightSpeed = 10;
+    private float zoomSpeed = 10;
+    private SPHCamera SPHCam;
+    private bool isVAB;
+    private ScreenMessage VABControlMessage;
+    private ScreenMessage SPHControlMessage;
 
     public VAB_SPHCamera()
     {
@@ -23,8 +33,16 @@ namespace KerboKatz
     protected override void Started()
     {
       currentSettings.load("SmallUtilities", "VAB_SPHCameraSettings", modName);
+      currentSettings.setDefault("rotationSpeed", "10");
+      currentSettings.setDefault("HeightSpeed", "10");
+      currentSettings.setDefault("zoomSpeed", "10");
+
       settingsWindowRect.x = currentSettings.getFloat("settingsWindowRectX");
       settingsWindowRect.y = currentSettings.getFloat("settingsWindowRectY");
+
+      rotationSpeed = currentSettings.getFloat("rotationSpeed");
+      HeightSpeed = currentSettings.getFloat("HeightSpeed");
+      zoomSpeed = currentSettings.getFloat("zoomSpeed");
 
       setIcon(Utilities.getTexture("EditorCamUtilities", "SmallUtilities/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB);
@@ -32,6 +50,14 @@ namespace KerboKatz
       VABControlMessage = new ScreenMessage("Using VAB controls!", 5, ScreenMessageStyle.LOWER_CENTER);
       SPHControlMessage = new ScreenMessage("Using SPH controls!", 5, ScreenMessageStyle.LOWER_CENTER);
       initMod();
+      if (isVAB)
+      {
+        vabControls = true;
+      }
+      else
+      {
+        vabControls = false;
+      }
     }
 
     protected override void onToolbar()
@@ -71,6 +97,10 @@ namespace KerboKatz
     {
       if (currentSettings != null)
       {
+        currentSettings.set("rotationSpeed", rotationSpeed);
+        currentSettings.set("HeightSpeed", HeightSpeed);
+        currentSettings.set("zoomSpeed", zoomSpeed);
+        currentSettings.set("vabControls", vabControls);
         currentSettings.set("showSettings", false);
         currentSettings.set("settingsWindowRectX", settingsWindowRect.x);
         currentSettings.set("settingsWindowRectY", settingsWindowRect.y);
@@ -89,19 +119,6 @@ namespace KerboKatz
           var shift = (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
           if (shift && vabControls || !vabControls && !shift)
           {
-            //move cam up/down
-            camFocus.y += Input.GetAxis("Mouse ScrollWheel") * HeightSpeed;
-            if (isVAB)
-            {
-              camFocus.y = Mathf.Clamp(camFocus.y, VABCam.minHeight, VABCam.maxHeight);
-            }
-            else
-            {
-              camFocus.y = Mathf.Clamp(camFocus.y, SPHCam.minHeight, SPHCam.maxHeight);
-            }
-          }
-          else if (shift && !vabControls || vabControls && !shift)
-          {
             //zoom in/out
             distance += Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
             if (isVAB)
@@ -113,6 +130,19 @@ namespace KerboKatz
               distance = Mathf.Clamp(distance, SPHCam.minDistance, SPHCam.maxDistance);
             }
             distance = EditorBounds.ClampCameraDistance(distance);
+          }
+          else if (shift && !vabControls || vabControls && !shift)
+          {
+            //move cam up/down
+            camFocus.y += Input.GetAxis("Mouse ScrollWheel") * HeightSpeed;
+            if (isVAB)
+            {
+              camFocus.y = Mathf.Clamp(camFocus.y, VABCam.minHeight, VABCam.maxHeight);
+            }
+            else
+            {
+              camFocus.y = Mathf.Clamp(camFocus.y, SPHCam.minHeight, SPHCam.maxHeight);
+            }
           }
           isCamUpdateRequired = true;
         }
@@ -167,17 +197,6 @@ namespace KerboKatz
         SPHCam.camPitch = pitch;
       }
     }
-
-    private Vector3 camFocus = new Vector3(0, 0, 0);
-    public float MouseSensitivity = 0.002f;
-    private VABCamera VABCam;
-    private float rotationSpeed = 10;
-    private float HeightSpeed = 10;
-    private float zoomSpeed = 10;
-    private SPHCamera SPHCam;
-    private bool isVAB;
-    private ScreenMessage VABControlMessage;
-    private ScreenMessage SPHControlMessage;
 
     private void uninitMod()
     {
@@ -249,10 +268,6 @@ namespace KerboKatz
         if (resetDistance)
           distance = 15;
       }
-    }
-
-    private void onDestroy()
-    {
     }
 
     protected override void afterDestroy()

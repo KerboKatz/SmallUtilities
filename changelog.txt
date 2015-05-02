@@ -1,3 +1,7 @@
+v 1.1.2
+  * Fix:
+   * Fixed settings not being saved in EditorCamExtensions
+   * Fixed wrong mode selected on start
 v 1.1
  * Added:
   * FPS Viewer: Ability  to add a overlay to show the fps over the last second
