@@ -1,3 +1,6 @@
+v 1.1.3
+ * Added:
+  * DisableTempGagues: Disables the temperature gauges on start
 v 1.1.2
   * Fix:
    * Fixed settings not being saved in EditorCamExtensions
