@@ -27,7 +27,7 @@ namespace KerboKatz
       modName = "VAB_SPHCamera";
       displayName = "Editor Camera Extension";
       tooltip = "Use left click to toggle between VAB and SPH Camera.\n Use right click to open the settings menu.";
-      requiresUtilities = new Version(1, 2, 0);
+      requiresUtilities = new Version(1, 2, 2);
     }
 
     protected override void Started()
@@ -120,29 +120,12 @@ namespace KerboKatz
           if (shift && vabControls || !vabControls && !shift)
           {
             //zoom in/out
-            distance += Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
-            if (isVAB)
-            {
-              distance = Mathf.Clamp(distance, VABCam.minDistance, VABCam.maxDistance);
-            }
-            else
-            {
-              distance = Mathf.Clamp(distance, SPHCam.minDistance, SPHCam.maxDistance);
-            }
-            distance = EditorBounds.ClampCameraDistance(distance);
+            distance -= Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
           }
           else if (shift && !vabControls || vabControls && !shift)
           {
             //move cam up/down
             camFocus.y += Input.GetAxis("Mouse ScrollWheel") * HeightSpeed;
-            if (isVAB)
-            {
-              camFocus.y = Mathf.Clamp(camFocus.y, VABCam.minHeight, VABCam.maxHeight);
-            }
-            else
-            {
-              camFocus.y = Mathf.Clamp(camFocus.y, SPHCam.minHeight, SPHCam.maxHeight);
-            }
           }
           isCamUpdateRequired = true;
         }
@@ -151,16 +134,50 @@ namespace KerboKatz
           //rotate
           heading += Input.GetAxis("Mouse X") * rotationSpeed * MouseSensitivity;
           pitch -= Input.GetAxis("Mouse Y") * rotationSpeed * MouseSensitivity;
-          if (isVAB)
-          {
-            pitch = Mathf.Clamp(pitch, VABCam.minPitch, VABCam.maxPitch);
-          }
-          else
-          {
-            pitch = Mathf.Clamp(pitch, SPHCam.minPitch, SPHCam.maxPitch);
-          }
           isCamUpdateRequired = true;
         }
+        #region keyboard controls
+        if (Input.GetKey(GameSettings.ZOOM_IN.getDefaultPrimary()))
+        {
+          distance -= zoomSpeed/20;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.ZOOM_OUT.getDefaultPrimary()))
+        {
+          distance += zoomSpeed/20;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.SCROLL_VIEW_UP.getDefaultPrimary()))
+        {
+          camFocus.y += HeightSpeed / 20;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.SCROLL_VIEW_DOWN.getDefaultPrimary()))
+        {
+          camFocus.y -= HeightSpeed / 20;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.CAMERA_ORBIT_UP.getDefaultPrimary()))
+        {
+          pitch += rotationSpeed * MouseSensitivity;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.CAMERA_ORBIT_DOWN.getDefaultPrimary()))
+        {
+          pitch -= rotationSpeed * MouseSensitivity;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.CAMERA_ORBIT_LEFT.getDefaultPrimary()))
+        {
+          heading += rotationSpeed * MouseSensitivity;
+          isCamUpdateRequired = true;
+        }
+        if (Input.GetKey(GameSettings.CAMERA_ORBIT_RIGHT.getDefaultPrimary()))
+        {
+          heading -= rotationSpeed * MouseSensitivity;
+          isCamUpdateRequired = true;
+        }
+        #endregion
         if (isCamUpdateRequired)
         {
           updateCam();
@@ -168,22 +185,71 @@ namespace KerboKatz
       }
       if (isVAB)
       {
-        if (VABCam.camHdg != heading || VABCam.camPitch != pitch || VABCam.scrollHeight != camFocus.y || VABCam.Distance != distance)
+        if (VABCam.camHdg == 0 && VABCam.camPitch == 0)
+        {
+          heading = 0;
+          pitch = 0;
+        }else if (VABCam.camHdg != heading || VABCam.camPitch != pitch || VABCam.scrollHeight != camFocus.y || VABCam.Distance != distance)
         {
           ResetCam();
         }
       }
       else
       {
-        if (SPHCam.camHdg != heading || SPHCam.camPitch != pitch || SPHCam.scrollHeight != camFocus.y || SPHCam.Distance != distance)
+        if (SPHCam.camHdg == 0 && SPHCam.camPitch == 0)
+        {
+          heading = 0;
+          pitch = 0;
+        }
+        else if (SPHCam.camHdg != heading || SPHCam.camPitch != pitch || SPHCam.scrollHeight != camFocus.y || SPHCam.Distance != distance)
         {
           ResetCam();
         }
       }
     }
 
+    private void clampPitch()
+    {
+      if (isVAB)
+      {
+        pitch = Mathf.Clamp(pitch, VABCam.minPitch, VABCam.maxPitch);
+      }
+      else
+      {
+        pitch = Mathf.Clamp(pitch, SPHCam.minPitch, SPHCam.maxPitch);
+      }
+    }
+
+    private void clampFocus()
+    {
+      if (isVAB)
+      {
+        camFocus.y = Mathf.Clamp(camFocus.y, VABCam.minHeight, VABCam.maxHeight);
+      }
+      else
+      {
+        camFocus.y = Mathf.Clamp(camFocus.y, SPHCam.minHeight, SPHCam.maxHeight);
+      }
+    }
+
+    private void clampDistance()
+    {
+      if (isVAB)
+      {
+        distance = Mathf.Clamp(distance, VABCam.minDistance, VABCam.maxDistance);
+      }
+      else
+      {
+        distance = Mathf.Clamp(distance, SPHCam.minDistance, SPHCam.maxDistance);
+      }
+      distance = EditorBounds.ClampCameraDistance(distance);
+    }
+
     private void updateCam()
     {
+      clampDistance();
+      clampFocus();
+      clampPitch();
       if (isVAB)
       {
         VABCam.PlaceCamera(camFocus, distance);
