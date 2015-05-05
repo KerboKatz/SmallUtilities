@@ -1,3 +1,8 @@
+v 1.1.5
+ * Editor Camera Utilities:
+  * Fixed issues with camera reseting if camera pitch < 0 
+ * Added:
+  * Afterburner module: Use case and description can be found in the forum thread
 v 1.1.4
  * Editor Camera Utilities:
   * Added support for keyboard movements

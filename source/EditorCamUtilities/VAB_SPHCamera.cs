@@ -189,7 +189,8 @@ namespace KerboKatz
         {
           heading = 0;
           pitch = 0;
-        }else if (VABCam.camHdg != heading || VABCam.camPitch != pitch || VABCam.scrollHeight != camFocus.y || VABCam.Distance != distance)
+        }
+        else if (VABCam.camHdg != heading || (VABCam.camPitch != pitch && VABCam.camPitch>0) || VABCam.scrollHeight != camFocus.y || VABCam.Distance != distance)
         {
           ResetCam();
         }
@@ -201,7 +202,7 @@ namespace KerboKatz
           heading = 0;
           pitch = 0;
         }
-        else if (SPHCam.camHdg != heading || SPHCam.camPitch != pitch || SPHCam.scrollHeight != camFocus.y || SPHCam.Distance != distance)
+        else if (SPHCam.camHdg != heading || (SPHCam.camPitch != pitch && SPHCam.camPitch > 0) || SPHCam.scrollHeight != camFocus.y || SPHCam.Distance != distance)
         {
           ResetCam();
         }
