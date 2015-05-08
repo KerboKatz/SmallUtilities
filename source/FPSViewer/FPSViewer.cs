@@ -19,6 +19,8 @@ namespace KerboKatz
       currentSettings.load("SmallUtilities", "FPSViewerSettings", modName);
       position.x = currentSettings.getFloat("fpsPosX");
       position.y = currentSettings.getFloat("fpsPosY");
+      showMinFPS = currentSettings.getBool("showMinFPS");
+      showMaxFPS = currentSettings.getBool("showMaxFPS");
 
       setIcon(Utilities.getTexture("icon", "SmallUtilities/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);

@@ -20,6 +20,8 @@ namespace KerboKatz
     private Rectangle settingsWindowRect = new Rectangle(Rectangle.updateType.Cursor);
     private GUIStyle moveHere;
     private GUIStyle settingsWindowStyle;
+    private bool showMinFPS;
+    private bool showMaxFPS;
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -82,7 +84,16 @@ namespace KerboKatz
 
     private void showFPSOnDisplay()
     {
-      GUI.Label(position.rect, Utilities.round(FPS.currentFPS).ToString() + "\n" + Utilities.round(FPS.minFPS).ToString() + "\n" + Utilities.round(FPS.maxFPS).ToString(), fpsStyle);
+      var fps = Utilities.round(FPS.currentFPS).ToString();
+      if (currentSettings.getBool("showMinFPS"))
+      {
+        fps = fps + "\n" + Utilities.round(FPS.minFPS).ToString();
+      }
+      if (currentSettings.getBool("showMaxFPS"))
+      {
+        fps = fps + "\n" + Utilities.round(FPS.maxFPS).ToString();
+      }
+      GUI.Label(position.rect, fps, fpsStyle);
       if (currentSettings.getBool("changePosition"))
       {
         GUI.depth = int.MaxValue;
@@ -102,6 +113,22 @@ namespace KerboKatz
       else
       {
         currentSettings.set("depth", int.MaxValue - 1);
+      }
+      if (Utilities.UI.createToggle("Show min FPS", showMinFPS, toggleStyle))
+      {
+        showMinFPS = true;
+      }
+      else
+      {
+        showMinFPS = false;
+      }
+      if (Utilities.UI.createToggle("Show max FPS", showMaxFPS, toggleStyle))
+      {
+        showMaxFPS = true;
+      }
+      else
+      {
+        showMaxFPS = false;
       }
       GUILayout.BeginVertical();
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected);
@@ -128,6 +155,8 @@ namespace KerboKatz
       GUILayout.BeginHorizontal();
       if (Utilities.UI.createButton("Save", buttonStyle))
       {
+        currentSettings.set("showMinFPS", showMinFPS);
+        currentSettings.set("showMaxFPS", showMaxFPS);
         updateToolbarBool();
       }
       GUILayout.FlexibleSpace();
