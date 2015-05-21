@@ -196,14 +196,12 @@ namespace KerboKatz
       }
       else
       {
-        camFocus.x = SPHCam.offset.x;
-        camFocus.z = SPHCam.offset.y;
+        camFocus.x = SPHCam.pivotPosition.x;
+        camFocus.z = SPHCam.pivotPosition.z;
         camFocus.y += SPHCam.scrollHeight;
         SPHCam.PlaceCamera(camFocus, SPHCam.Distance + distance);
         SPHCam.camHdg += heading;
         SPHCam.camPitch += pitch;
-        camFocus.x = 0;
-        camFocus.z = 0;
       }
       camFocus.y = 0;
       pitch = 0;

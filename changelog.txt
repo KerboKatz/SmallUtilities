@@ -1,3 +1,5 @@
+v 1.1.8
+ * Fixed EditorCamUtilities reseting the camera position in VAB
 v 1.1.7
  * Added FillSpotsWithTourists
  * Added ModifiedExplosionPotential
@@ -5,7 +7,7 @@ v 1.1.7
  * Afterburner: Fixed compatibility with Engine Lighting
  * EditorCamUtilities:
   * Simplified the code a little bit
-  * Fixed compatibility with other mods that modify the cam behaviour
+  * Fixed compatibility with other mods that modify the cam behavior
 v 1.1.6
  * Added option to FPSViewer to disable min/max fps
 v 1.1.5
