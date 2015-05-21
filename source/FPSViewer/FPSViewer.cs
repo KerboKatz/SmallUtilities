@@ -16,13 +16,13 @@ namespace KerboKatz
 
     protected override void Started()
     {
-      currentSettings.load("SmallUtilities", "FPSViewerSettings", modName);
+      currentSettings.load("SmallUtilities/FPSViewer", "FPSViewerSettings", modName);
       position.x = currentSettings.getFloat("fpsPosX");
       position.y = currentSettings.getFloat("fpsPosY");
       showMinFPS = currentSettings.getBool("showMinFPS");
       showMaxFPS = currentSettings.getBool("showMaxFPS");
 
-      setIcon(Utilities.getTexture("icon", "SmallUtilities/Textures"));
+      setIcon(Utilities.getTexture("icon", "SmallUtilities/FPSViewer/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);
     }
 

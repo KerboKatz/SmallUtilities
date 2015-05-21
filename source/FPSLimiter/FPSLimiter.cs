@@ -19,7 +19,7 @@ namespace KerboKatz
     protected override void Started()
     {
       DontDestroyOnLoad(this);
-      currentSettings.load("SmallUtilities", "FPSLimiterSettings", modName);
+      currentSettings.load("SmallUtilities/FPSLimiter", "FPSLimiterSettings", modName);
       currentSettings.setDefault("showSettings", "false");
       currentSettings.setDefault("settingsSettingsRectX", "0");
       currentSettings.setDefault("settingsSettingsRectY", "0");
@@ -40,7 +40,7 @@ namespace KerboKatz
     {
       if (GameScene == GameScenes.MAINMENU)
       {
-        setIcon(Utilities.getTexture("FPSLimiter", "SmallUtilities/Textures"));
+        setIcon(Utilities.getTexture("FPSLimiter", "SmallUtilities/FPSLimiter/Textures"));
         GameEvents.onGameSceneLoadRequested.Remove(onGameSceneLoadRequested);
       }
     }

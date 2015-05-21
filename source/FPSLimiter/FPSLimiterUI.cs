@@ -6,7 +6,7 @@ namespace KerboKatz
   public partial class FPSLimiter : KerboKatzBase
   {
     private bool initStyle;
-    private int settingsWindowID = 1702001001;
+    private static int settingsWindowID = Utilities.UI.getNewWindowID;
     private Rectangle settingsWindowRect = new Rectangle(Rectangle.updateType.Cursor);
     private float backgroundFPS;
     private GUIStyle settingsWindowStyle;
@@ -103,7 +103,7 @@ namespace KerboKatz
     {
       GUILayout.BeginHorizontal();
       Utilities.UI.createLabel("CurrentFPS", textStyle);
-      Utilities.UI.createLabel(Utilities.round(FPS.currentFPS, 1).ToString(), numberFieldStyle);
+      Utilities.UI.createLabel(Utilities.round(FPS.instance.currentFPS, 1).ToString(), numberFieldStyle);
 
       GUILayout.EndHorizontal();
     }

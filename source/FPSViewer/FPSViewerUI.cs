@@ -5,8 +5,8 @@ namespace KerboKatz
 {
   public partial class FPSViewer : KerboKatzBase
   {
-    private int changePositionWindowID = 1702001003;
-    private int settingsWindowID = 1702001002;
+    private static int changePositionWindowID = Utilities.UI.getNewWindowID;
+    private static int settingsWindowID = Utilities.UI.getNewWindowID;
     private bool initStyle;
     private GUIStyle changePositionStyle;
     private GUIStyle textStyle;
@@ -84,14 +84,14 @@ namespace KerboKatz
 
     private void showFPSOnDisplay()
     {
-      var fps = Utilities.round(FPS.currentFPS).ToString();
+      var fps = Utilities.round(FPS.instance.currentFPS).ToString();
       if (currentSettings.getBool("showMinFPS"))
       {
-        fps = fps + "\n" + Utilities.round(FPS.minFPS).ToString();
+        fps = fps + "\n" + Utilities.round(FPS.instance.minFPS).ToString();
       }
       if (currentSettings.getBool("showMaxFPS"))
       {
-        fps = fps + "\n" + Utilities.round(FPS.maxFPS).ToString();
+        fps = fps + "\n" + Utilities.round(FPS.instance.maxFPS).ToString();
       }
       GUI.Label(position.rect, fps, fpsStyle);
       if (currentSettings.getBool("changePosition"))
@@ -136,7 +136,7 @@ namespace KerboKatz
       GUILayout.BeginHorizontal();
       if (Utilities.UI.createButton("Reset min/max", buttonStyle))
       {
-        FPS.resetMinMax();
+        FPS.instance.resetMinMax();
       }
       GUILayout.FlexibleSpace();
       if (Utilities.UI.createButton("Change position", buttonStyle, "Press on this to change the position where the fps will show."))

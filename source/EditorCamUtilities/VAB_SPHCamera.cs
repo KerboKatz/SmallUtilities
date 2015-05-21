@@ -5,7 +5,7 @@ using UnityEngine;
 namespace KerboKatz
 {
   [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-  public partial class VAB_SPHCamera : KerboKatzBase
+  public partial class EditorCamUtilities : KerboKatzBase
   {
     private float distance = 0;
     private float heading;
@@ -14,17 +14,17 @@ namespace KerboKatz
     private Vector3 camFocus = new Vector3(0, 0, 0);
     public float MouseSensitivity = 0.002f;
     private VABCamera VABCam;
-    private float rotationSpeed = 10;
-    private float HeightSpeed = 10;
-    private float zoomSpeed = 10;
+    private float rotationSpeed;
+    private float HeightSpeed;
+    private float zoomSpeed;
     private SPHCamera SPHCam;
     private bool isVAB;
     private ScreenMessage VABControlMessage;
     private ScreenMessage SPHControlMessage;
 
-    public VAB_SPHCamera()
+    public EditorCamUtilities()
     {
-      modName = "VAB_SPHCamera";
+      modName = "EditorCamUtilities";
       displayName = "Editor Camera Extension";
       tooltip = "Use left click to toggle between VAB and SPH Camera.\n Use right click to open the settings menu.";
       requiresUtilities = new Version(1, 2, 2);
@@ -32,10 +32,10 @@ namespace KerboKatz
 
     protected override void Started()
     {
-      currentSettings.load("SmallUtilities", "VAB_SPHCameraSettings", modName);
-      currentSettings.setDefault("rotationSpeed", "10");
-      currentSettings.setDefault("HeightSpeed", "10");
-      currentSettings.setDefault("zoomSpeed", "10");
+      currentSettings.load("SmallUtilities/EditorCamUtilities", "EditorCamUtilitiesSettings", modName);
+      currentSettings.setDefault("rotationSpeed", "5");
+      currentSettings.setDefault("HeightSpeed", "5");
+      currentSettings.setDefault("zoomSpeed", "5");
 
       settingsWindowRect.x = currentSettings.getFloat("settingsWindowRectX");
       settingsWindowRect.y = currentSettings.getFloat("settingsWindowRectY");
@@ -44,7 +44,7 @@ namespace KerboKatz
       HeightSpeed = currentSettings.getFloat("HeightSpeed");
       zoomSpeed = currentSettings.getFloat("zoomSpeed");
 
-      setIcon(Utilities.getTexture("EditorCamUtilities", "SmallUtilities/Textures"));
+      setIcon(Utilities.getTexture("EditorCamUtilities", "SmallUtilities/EditorCamUtilities/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB);
 
       VABControlMessage = new ScreenMessage("Using VAB controls!", 5, ScreenMessageStyle.LOWER_CENTER);
@@ -139,12 +139,12 @@ namespace KerboKatz
         #region keyboard controls
         if (Input.GetKey(GameSettings.ZOOM_IN.getDefaultPrimary()))
         {
-          distance -= zoomSpeed/20;
+          distance -= zoomSpeed / 20;
           isCamUpdateRequired = true;
         }
         if (Input.GetKey(GameSettings.ZOOM_OUT.getDefaultPrimary()))
         {
-          distance += zoomSpeed/20;
+          distance += zoomSpeed / 20;
           isCamUpdateRequired = true;
         }
         if (Input.GetKey(GameSettings.SCROLL_VIEW_UP.getDefaultPrimary()))
@@ -177,92 +177,38 @@ namespace KerboKatz
           heading -= rotationSpeed * MouseSensitivity;
           isCamUpdateRequired = true;
         }
-        #endregion
+        #endregion keyboard controls
         if (isCamUpdateRequired)
         {
           updateCam();
         }
       }
-      if (isVAB)
-      {
-        if (VABCam.camHdg == 0 && VABCam.camPitch == 0)
-        {
-          heading = 0;
-          pitch = 0;
-        }
-        else if (VABCam.camHdg != heading || (VABCam.camPitch != pitch && VABCam.camPitch>0) || VABCam.scrollHeight != camFocus.y || VABCam.Distance != distance)
-        {
-          ResetCam();
-        }
-      }
-      else
-      {
-        if (SPHCam.camHdg == 0 && SPHCam.camPitch == 0)
-        {
-          heading = 0;
-          pitch = 0;
-        }
-        else if (SPHCam.camHdg != heading || (SPHCam.camPitch != pitch && SPHCam.camPitch > 0) || SPHCam.scrollHeight != camFocus.y || SPHCam.Distance != distance)
-        {
-          ResetCam();
-        }
-      }
-    }
-
-    private void clampPitch()
-    {
-      if (isVAB)
-      {
-        pitch = Mathf.Clamp(pitch, VABCam.minPitch, VABCam.maxPitch);
-      }
-      else
-      {
-        pitch = Mathf.Clamp(pitch, SPHCam.minPitch, SPHCam.maxPitch);
-      }
-    }
-
-    private void clampFocus()
-    {
-      if (isVAB)
-      {
-        camFocus.y = Mathf.Clamp(camFocus.y, VABCam.minHeight, VABCam.maxHeight);
-      }
-      else
-      {
-        camFocus.y = Mathf.Clamp(camFocus.y, SPHCam.minHeight, SPHCam.maxHeight);
-      }
-    }
-
-    private void clampDistance()
-    {
-      if (isVAB)
-      {
-        distance = Mathf.Clamp(distance, VABCam.minDistance, VABCam.maxDistance);
-      }
-      else
-      {
-        distance = Mathf.Clamp(distance, SPHCam.minDistance, SPHCam.maxDistance);
-      }
-      distance = EditorBounds.ClampCameraDistance(distance);
     }
 
     private void updateCam()
     {
-      clampDistance();
-      clampFocus();
-      clampPitch();
       if (isVAB)
       {
-        VABCam.PlaceCamera(camFocus, distance);
-        VABCam.camHdg = heading;
-        VABCam.camPitch = pitch;
+        camFocus.y += VABCam.scrollHeight;
+        VABCam.PlaceCamera(camFocus, VABCam.Distance+distance);
+        VABCam.camHdg += heading;
+        VABCam.camPitch += pitch;
       }
       else
       {
-        SPHCam.PlaceCamera(camFocus, distance);
-        SPHCam.camHdg = heading;
-        SPHCam.camPitch = pitch;
+        camFocus.x = SPHCam.offset.x;
+        camFocus.z = SPHCam.offset.y;
+        camFocus.y += SPHCam.scrollHeight;
+        SPHCam.PlaceCamera(camFocus, SPHCam.Distance + distance);
+        SPHCam.camHdg += heading;
+        SPHCam.camPitch += pitch;
+        camFocus.x = 0;
+        camFocus.z = 0;
       }
+      camFocus.y = 0;
+      pitch = 0;
+      heading = 0;
+      distance = 0;
     }
 
     private void uninitMod()
@@ -286,7 +232,6 @@ namespace KerboKatz
         isVAB = false;
       }
 
-      ResetCam(true);
       updateCam();
       //save and overwrite all the camera controls so they dont interfere
       GameSettings.AXIS_MOUSEWHEEL.saveDefault();
@@ -315,26 +260,6 @@ namespace KerboKatz
 
       GameSettings.CAMERA_ORBIT_RIGHT.saveDefault();
       GameSettings.CAMERA_ORBIT_RIGHT.setNone();
-    }
-
-    private void ResetCam(bool resetDistance = false)
-    {
-      if (isVAB)
-      {
-        heading = VABCam.initialHeading;
-        pitch = VABCam.initialPitch;
-        camFocus.y = 15;//VABCam.initialHeight;
-        if (resetDistance)
-          distance = VABCam.startDistance;
-      }
-      else
-      {
-        heading = 1.266f;
-        pitch = 0.286f;
-        camFocus.y = 5;//VABCam.initialHeight;
-        if (resetDistance)
-          distance = 15;
-      }
     }
 
     protected override void afterDestroy()

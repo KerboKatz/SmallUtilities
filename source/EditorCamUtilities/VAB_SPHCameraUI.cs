@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace KerboKatz
 {
-  public partial class VAB_SPHCamera : KerboKatzBase
+  public partial class EditorCamUtilities : KerboKatzBase
   {
-    private int settingsWindowID = 1702001101;
+    private static int settingsWindowID = Utilities.UI.getNewWindowID;
     private bool initStyle;
     private GUIStyle changePositionStyle;
     private GUIStyle textStyle;

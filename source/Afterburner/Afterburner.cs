@@ -20,12 +20,14 @@ namespace KerboKatz
     private float realThrustBonus;
     private List<ModuleEngines> ModuleEngines;
     private string info;
+    private float fakeThrustBonus;
 
     public override void OnAwake()
     {
       realFuelEfficencyDecrease = (fuelEfficencyDecrease / 100) + 1;
+      fakeThrustBonus = (thrustBonus / 100) + 1;
       realThrustBonus = ((thrustBonus / 100) + 1) * realFuelEfficencyDecrease;
-      realHeatIncrease = ((heatIncrease / 100) + 1) * realThrustBonus;
+      realHeatIncrease = ((heatIncrease / 100) + 1);
 
       ModuleEngines = part.FindModulesImplementing<ModuleEngines>();
       var toBeRemoved = new List<ModuleEngines>();
@@ -85,6 +87,7 @@ namespace KerboKatz
         burning = false;
       }
     }
+
     [KSPEvent(guiActive = false, guiActiveEditor = true, guiName = "Turn Afterburner on")]
     public void ToggleAfterburnerEditor()
     {
@@ -106,6 +109,7 @@ namespace KerboKatz
         Events["ToggleAfterburnerEditor"].guiName = Events["ToggleAfterburner"].guiName;
       }
     }
+
     [KSPAction("Toggle Afterburner")]
     public void ToggleAfterburner(KSPActionParam param)
     {
@@ -117,9 +121,10 @@ namespace KerboKatz
       Events["ToggleAfterburner"].guiName = "Turn Afterburner on";
       foreach (var ModuleEngine in ModuleEngines)
       {
+        ModuleEngine.heatProduction = ModuleEngine.heatProduction / realHeatIncrease;
         ModuleEngine.atmosphereCurve = ModuleEnginesCurves[ModuleEngine.engineID].realAtmosphereCurve;
         ModuleEngine.maxFuelFlow = ModuleEngine.maxFuelFlow / realThrustBonus;
-        ModuleEngine.maxThrust = ModuleEngine.maxThrust * realHeatIncrease;
+        ModuleEngine.maxThrust = ModuleEngine.maxThrust / fakeThrustBonus;
       }
     }
 
@@ -128,9 +133,10 @@ namespace KerboKatz
       Events["ToggleAfterburner"].guiName = "Turn Afterburner off";
       foreach (var ModuleEngine in ModuleEngines)
       {
+        ModuleEngine.heatProduction = ModuleEngine.heatProduction * realHeatIncrease;
         ModuleEngine.atmosphereCurve = ModuleEnginesCurves[ModuleEngine.engineID].atmosphereCurve;
         ModuleEngine.maxFuelFlow = ModuleEngine.maxFuelFlow * realThrustBonus;
-        ModuleEngine.maxThrust = ModuleEngine.maxThrust / realHeatIncrease;
+        ModuleEngine.maxThrust = ModuleEngine.maxThrust * fakeThrustBonus;
       }
     }
   }
