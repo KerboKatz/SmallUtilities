@@ -22,6 +22,7 @@ namespace KerboKatz
     private GUIStyle settingsWindowStyle;
     private bool showMinFPS;
     private bool showMaxFPS;
+    private bool hideOnUIHidden;
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -84,6 +85,10 @@ namespace KerboKatz
 
     private void showFPSOnDisplay()
     {
+      if (UIEvents._instance.hiddenUI && currentSettings.getBool("hideOnUIHidden"))
+      {
+        return;
+      }
       var fps = Utilities.round(FPS.instance.currentFPS).ToString();
       if (currentSettings.getBool("showMinFPS"))
       {
@@ -130,6 +135,14 @@ namespace KerboKatz
       {
         showMaxFPS = false;
       }
+      if (Utilities.UI.createToggle("Hide on hidden UI", hideOnUIHidden, toggleStyle))
+      {
+        hideOnUIHidden = true;
+      }
+      else
+      {
+        hideOnUIHidden = false;
+      }
       GUILayout.BeginVertical();
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected);
 
@@ -157,6 +170,7 @@ namespace KerboKatz
       {
         currentSettings.set("showMinFPS", showMinFPS);
         currentSettings.set("showMaxFPS", showMaxFPS);
+        currentSettings.set("hideOnUIHidden", hideOnUIHidden);
         updateToolbarBool();
       }
       GUILayout.FlexibleSpace();

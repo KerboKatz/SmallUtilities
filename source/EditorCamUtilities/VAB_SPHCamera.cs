@@ -1,5 +1,7 @@
 ﻿using KerboKatz.Extensions;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace KerboKatz
@@ -13,14 +15,14 @@ namespace KerboKatz
     private bool vabControls = true;
     private Vector3 camFocus = new Vector3(0, 0, 0);
     public float MouseSensitivity = 0.002f;
-    private VABCamera VABCam;
     private float rotationSpeed;
     private float HeightSpeed;
     private float zoomSpeed;
-    private SPHCamera SPHCam;
-    private bool isVAB;
+    private SPHCamera EditorCamera;
     private ScreenMessage VABControlMessage;
     private ScreenMessage SPHControlMessage;
+    private Vector3 OriginalSize;
+    private Vector2 heightLimits;
 
     public EditorCamUtilities()
     {
@@ -50,14 +52,6 @@ namespace KerboKatz
       VABControlMessage = new ScreenMessage("Using VAB controls!", 5, ScreenMessageStyle.LOWER_CENTER);
       SPHControlMessage = new ScreenMessage("Using SPH controls!", 5, ScreenMessageStyle.LOWER_CENTER);
       initMod();
-      if (isVAB)
-      {
-        vabControls = true;
-      }
-      else
-      {
-        vabControls = false;
-      }
     }
 
     protected override void onToolbar()
@@ -74,6 +68,7 @@ namespace KerboKatz
           vabControls = true;
           ScreenMessages.PostScreenMessage(VABControlMessage);
         }
+        ThreadPool.QueueUserWorkItem(new WaitCallback(updateBounds));
       }
       else if (Input.GetMouseButtonUp(1))
       {
@@ -136,6 +131,12 @@ namespace KerboKatz
           pitch -= Input.GetAxis("Mouse Y") * rotationSpeed * MouseSensitivity;
           isCamUpdateRequired = true;
         }
+        if (Input.GetMouseButton(2) && vabControls)
+        {
+          //zoom in/out
+          distance -= Input.GetAxis("Mouse Y") * zoomSpeed * (MouseSensitivity*10);
+          isCamUpdateRequired = true;
+        }
         #region keyboard controls
         if (Input.GetKey(GameSettings.ZOOM_IN.getDefaultPrimary()))
         {
@@ -187,22 +188,28 @@ namespace KerboKatz
 
     private void updateCam()
     {
-      if (isVAB)
+      if (vabControls)
       {
-        camFocus.y += VABCam.scrollHeight;
-        VABCam.PlaceCamera(camFocus, VABCam.Distance+distance);
-        VABCam.camHdg += heading;
-        VABCam.camPitch += pitch;
+        camFocus.x = 0;
+        camFocus.z = 0;
       }
       else
       {
-        camFocus.x = SPHCam.pivotPosition.x;
-        camFocus.z = SPHCam.pivotPosition.z;
-        camFocus.y += SPHCam.scrollHeight;
-        SPHCam.PlaceCamera(camFocus, SPHCam.Distance + distance);
-        SPHCam.camHdg += heading;
-        SPHCam.camPitch += pitch;
+        camFocus.x = EditorCamera.pivotPosition.x;
+        camFocus.z = EditorCamera.pivotPosition.z;
       }
+      camFocus.y += EditorCamera.scrollHeight;
+      camFocus.y = Mathf.Clamp(camFocus.y, heightLimits.x, heightLimits.y);
+      EditorCamera.PlaceCamera(camFocus, EditorCamera.Distance + distance);
+      EditorCamera.camHdg += heading;
+      EditorCamera.camPitch += pitch;
+      if (EditorDriver.fetch.vabCamera.enabled)
+      {
+        EditorDriver.fetch.vabCamera.PlaceCamera(camFocus, EditorCamera.Distance);
+        EditorDriver.fetch.vabCamera.camHdg = EditorCamera.camHdg;
+        EditorDriver.fetch.vabCamera.camPitch = EditorCamera.camPitch;
+      }
+
       camFocus.y = 0;
       pitch = 0;
       heading = 0;
@@ -216,21 +223,21 @@ namespace KerboKatz
 
     private void initMod()
     {
-      if (VABCam == null)
-        VABCam = Camera.main.GetComponent<VABCamera>();
+      EditorDriver.fetch.sphCamera.enabled = true;
+      EditorCamera = EditorDriver.fetch.sphCamera;      
 
-      if (SPHCam == null)
-        SPHCam = Camera.main.GetComponent<SPHCamera>();
       if (Utilities.getEditorScene() == "VAB")
       {
-        isVAB = true;
+        EditorDriver.fetch.vabCamera.enabled = true;
+        vabControls = true;
+        heightLimits = new Vector2(EditorDriver.fetch.vabCamera.minHeight, EditorDriver.fetch.vabCamera.maxHeight);
       }
       else
       {
-        isVAB = false;
+        vabControls = false;
+        heightLimits = new Vector2(EditorDriver.fetch.sphCamera.minHeight, EditorDriver.fetch.sphCamera.maxHeight);
       }
-
-      updateCam();
+      ThreadPool.QueueUserWorkItem(new WaitCallback(updateBounds));
       //save and overwrite all the camera controls so they dont interfere
       GameSettings.AXIS_MOUSEWHEEL.saveDefault();
       GameSettings.AXIS_MOUSEWHEEL.setZero();
@@ -258,6 +265,44 @@ namespace KerboKatz
 
       GameSettings.CAMERA_ORBIT_RIGHT.saveDefault();
       GameSettings.CAMERA_ORBIT_RIGHT.setNone();
+    }
+
+    private void partevent(ConstructionEventType type, Part part)
+    {
+      Utilities.debug(modName, type + "_" + part.partInfo.name);
+    }
+
+    private void updateBounds(object state)
+    {
+      while (EditorBounds.Instance == null && EditorBounds.Instance.cameraOffsetBounds == null)
+      {
+        Thread.Sleep(50);
+      }
+      if (OriginalSize==null)
+      {
+        OriginalSize=EditorBounds.Instance.cameraOffsetBounds.size;
+      }
+      var size = EditorBounds.Instance.cameraOffsetBounds.size;
+      
+      if (vabControls)
+      {
+        size.x = 0;
+        size.z = 0;
+      }
+      else
+      {
+        if (OriginalSize.x == 0 && OriginalSize.z == 0)
+        {
+          size.x = size.y;
+          size.z = size.y;
+        }
+        else
+        {
+          size.x = OriginalSize.x;
+          size.z = OriginalSize.z;
+        }
+      }
+      EditorBounds.Instance.cameraOffsetBounds = new Bounds(EditorBounds.Instance.cameraOffsetBounds.center, size);
     }
 
     protected override void afterDestroy()

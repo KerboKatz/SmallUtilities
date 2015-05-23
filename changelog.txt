@@ -1,3 +1,6 @@
+v 1.1.9
+ * EditorCamUtilities Ability to move the camera in the VAB just like in the SPH
+ * Added an option to hide the fps from FPSViewer when the ui is toggled off
 v 1.1.8
  * Fixed EditorCamUtilities reseting the camera position in VAB
 v 1.1.7
