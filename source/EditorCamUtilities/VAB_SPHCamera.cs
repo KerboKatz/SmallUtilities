@@ -184,6 +184,17 @@ namespace KerboKatz
           updateCam();
         }
       }
+      if (EditorDriver.fetch.vabCamera.enabled)
+      {
+        if (EditorDriver.fetch.vabCamera.camHdg != EditorCamera.camHdg ||
+            EditorDriver.fetch.vabCamera.camPitch != EditorCamera.camPitch ||
+            EditorDriver.fetch.vabCamera.Distance != EditorCamera.Distance ||
+            EditorDriver.fetch.vabCamera.scrollHeight != EditorCamera.scrollHeight)
+        {
+          updateCam();
+        }
+
+      }
     }
 
     private void updateCam()
@@ -238,6 +249,7 @@ namespace KerboKatz
         heightLimits = new Vector2(EditorDriver.fetch.sphCamera.minHeight, EditorDriver.fetch.sphCamera.maxHeight);
       }
       ThreadPool.QueueUserWorkItem(new WaitCallback(updateBounds));
+
       //save and overwrite all the camera controls so they dont interfere
       GameSettings.AXIS_MOUSEWHEEL.saveDefault();
       GameSettings.AXIS_MOUSEWHEEL.setZero();
@@ -265,11 +277,6 @@ namespace KerboKatz
 
       GameSettings.CAMERA_ORBIT_RIGHT.saveDefault();
       GameSettings.CAMERA_ORBIT_RIGHT.setNone();
-    }
-
-    private void partevent(ConstructionEventType type, Part part)
-    {
-      Utilities.debug(modName, type + "_" + part.partInfo.name);
     }
 
     private void updateBounds(object state)

@@ -39,6 +39,12 @@ namespace KerboKatz
         }
       }
       GameEvents.onVesselLoaded.Add(onVesselLoad);
+      GameEvents.onPartUnpack.Add(onPartUnpack);
+    }
+
+    private void onPartUnpack(Part part)
+    {
+      updateExplosionPotential(part);
     }
 
     private void FixedUpdate()
@@ -85,6 +91,7 @@ namespace KerboKatz
 
     protected override void afterDestroy()
     {
+      GameEvents.onPartUnpack.Remove(onPartUnpack);
       GameEvents.onVesselLoaded.Remove(onVesselLoad);
     }
   }
