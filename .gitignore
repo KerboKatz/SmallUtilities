@@ -1,3 +1,5 @@
+*.dll
+
 *.so
 *.csproj
 # Object files

@@ -251,32 +251,33 @@ namespace KerboKatz
       ThreadPool.QueueUserWorkItem(new WaitCallback(updateBounds));
 
       //save and overwrite all the camera controls so they dont interfere
-      GameSettings.AXIS_MOUSEWHEEL.saveDefault();
+      GameSettings.AXIS_MOUSEWHEEL.saveDefault("AXIS_MOUSEWHEEL");
       GameSettings.AXIS_MOUSEWHEEL.setZero();
 
-      GameSettings.SCROLL_VIEW_UP.saveDefault();
+      GameSettings.SCROLL_VIEW_UP.saveDefault("SCROLL_VIEW_UP");
       GameSettings.SCROLL_VIEW_UP.setNone();
 
-      GameSettings.SCROLL_VIEW_DOWN.saveDefault();
+      GameSettings.SCROLL_VIEW_DOWN.saveDefault("SCROLL_VIEW_DOWN");
       GameSettings.SCROLL_VIEW_DOWN.setNone();
 
-      GameSettings.ZOOM_IN.saveDefault();
+      GameSettings.ZOOM_IN.saveDefault("ZOOM_IN");
       GameSettings.ZOOM_IN.setNone();
 
-      GameSettings.ZOOM_OUT.saveDefault();
+      GameSettings.ZOOM_OUT.saveDefault("ZOOM_OUT");
       GameSettings.ZOOM_OUT.setNone();
 
-      GameSettings.CAMERA_ORBIT_UP.saveDefault();
+      GameSettings.CAMERA_ORBIT_UP.saveDefault("CAMERA_ORBIT_UP");
       GameSettings.CAMERA_ORBIT_UP.setNone();
 
-      GameSettings.CAMERA_ORBIT_DOWN.saveDefault();
+      GameSettings.CAMERA_ORBIT_DOWN.saveDefault("CAMERA_ORBIT_DOWN");
       GameSettings.CAMERA_ORBIT_DOWN.setNone();
 
-      GameSettings.CAMERA_ORBIT_LEFT.saveDefault();
+      GameSettings.CAMERA_ORBIT_LEFT.saveDefault("CAMERA_ORBIT_LEFT");
       GameSettings.CAMERA_ORBIT_LEFT.setNone();
 
-      GameSettings.CAMERA_ORBIT_RIGHT.saveDefault();
+      GameSettings.CAMERA_ORBIT_RIGHT.saveDefault("CAMERA_ORBIT_RIGHT");
       GameSettings.CAMERA_ORBIT_RIGHT.setNone();
+      EditorCamUtilitiesExtensions.setSaveFileStatusToStarted();
     }
 
     private void updateBounds(object state)
@@ -332,6 +333,7 @@ namespace KerboKatz
       GameSettings.CAMERA_ORBIT_LEFT.reset();
 
       GameSettings.CAMERA_ORBIT_RIGHT.reset();
+      EditorCamUtilitiesExtensions.setSaveFileStatusToEnded();
     }
   }
 }

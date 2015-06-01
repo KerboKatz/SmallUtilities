@@ -1,6 +1,8 @@
+v 1.1.11
+ * Added a way for EditorCamUtilities to recover keybindings after a crash of the game
 v 1.1.10
  * Fixed an issue in EditorCamUtilities that caused the cam to move randomly
- * Fixed an issue in ModifiedExplosionPotential that caused parts to keep their original explosivness
+ * Fixed an issue in ModifiedExplosionPotential that caused parts to keep their original explosiveness
 v 1.1.9
  * EditorCamUtilities Ability to move the camera in the VAB just like in the SPH
  * Added an option to hide the fps from FPSViewer when the ui is toggled off
