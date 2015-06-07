@@ -1,4 +1,5 @@
 ﻿using KerboKatz.Extensions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace KerboKatz
@@ -23,6 +24,9 @@ namespace KerboKatz
     private bool showMinFPS;
     private bool showMaxFPS;
     private bool hideOnUIHidden;
+    int anchorOptionSelected = 4;
+    private GUIStyle sortTextStyle;
+    private GUIStyle sortOptionTextStyle;
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -66,6 +70,18 @@ namespace KerboKatz
 
       moveHere = new GUIStyle(fpsStyle);
       moveHere.alignment = TextAnchor.UpperLeft;
+
+      sortTextStyle = new GUIStyle(HighLogic.Skin.label);
+      sortTextStyle.margin.top = 2;
+      sortTextStyle.padding.setToZero();
+      sortTextStyle.fixedWidth = 100;
+
+      sortOptionTextStyle = new GUIStyle(sortTextStyle);
+      sortOptionTextStyle.margin.left = 0;
+      sortOptionTextStyle.padding.left = 0;
+      sortOptionTextStyle.fixedWidth = 80;
+      sortOptionTextStyle.alignment = TextAnchor.MiddleCenter;
+      Utilities.UI.setAnchorPosition(fpsStyle, anchorOptionSelected);
 
       initStyle = true;
     }
@@ -144,6 +160,7 @@ namespace KerboKatz
         hideOnUIHidden = false;
       }
       GUILayout.BeginVertical();
+      Utilities.UI.createOptionSwitcher("Anchor Gauge:", Utilities.UI.anchorOptions, ref anchorOptionSelected, sortTextStyle, sortOptionTextStyle);
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected);
 
       GUILayout.BeginHorizontal();
@@ -164,13 +181,15 @@ namespace KerboKatz
           currentSettings.set("changePosition", true);
       }
       GUILayout.EndHorizontal();
-
       GUILayout.BeginHorizontal();
       if (Utilities.UI.createButton("Save", buttonStyle))
       {
         currentSettings.set("showMinFPS", showMinFPS);
         currentSettings.set("showMaxFPS", showMaxFPS);
         currentSettings.set("hideOnUIHidden", hideOnUIHidden);
+        currentSettings.set("anchorOptionSelected", anchorOptionSelected);
+
+        Utilities.UI.setAnchorPosition(fpsStyle, anchorOptionSelected);
         updateToolbarBool();
       }
       GUILayout.FlexibleSpace();

@@ -77,9 +77,9 @@ namespace KerboKatz
     private void settingsWindow(int id)
     {
       GUILayout.BeginVertical();
-      rotationSpeed = Utilities.UI.createSlider("Rotation speed", rotationSpeed, 1, 50, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
-      HeightSpeed = Utilities.UI.createSlider("Height speed", HeightSpeed, 1, 50, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
-      zoomSpeed = Utilities.UI.createSlider("Zoom speed", zoomSpeed, 1, 50, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
+      rotationSpeed = Utilities.UI.createSlider("Rotation speed", rotationSpeed, 1, 10, 1, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
+      HeightSpeed = Utilities.UI.createSlider("Height speed", HeightSpeed, 1, 10, 1, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
+      zoomSpeed = Utilities.UI.createSlider("Zoom speed", zoomSpeed, 1, 10, 1, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb);
 
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected);
 

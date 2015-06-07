@@ -17,6 +17,8 @@ namespace KerboKatz
     protected override void Started()
     {
       currentSettings.load("SmallUtilities/FPSViewer", "FPSViewerSettings", modName);
+      currentSettings.setDefault("anchorOptionSelected", "4");
+      anchorOptionSelected = currentSettings.getInt("anchorOptionSelected");
       position.x = currentSettings.getFloat("fpsPosX");
       position.y = currentSettings.getFloat("fpsPosY");
       showMinFPS = currentSettings.getBool("showMinFPS");

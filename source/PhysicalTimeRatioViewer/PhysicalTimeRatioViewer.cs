@@ -10,7 +10,7 @@ namespace KerboKatz
     private float lastTime;
     private float ThisRealTime;
     private float lastRealTime;
-    private float lastGametimeToRealtimeCheck;
+    private float nextGametimeToRealtimeCheck;
     private float gameTimeToRealtime;
     public PhysicalTimeRatioViewer()
     {
@@ -23,6 +23,10 @@ namespace KerboKatz
     protected override void Started()
     {
       currentSettings.load("SmallUtilities/PhysicalTimeRatioViewer", "PhysicalTimeRatioViewerSettings", modName);
+      currentSettings.setDefault("refreshRate", "0.5");
+      currentSettings.setDefault("anchorOptionSelected", "4");
+      anchorOptionSelected = currentSettings.getInt("anchorOptionSelected");
+      refreshRate = currentSettings.getFloat("refreshRate");
       position.x = currentSettings.getFloat("gaugePosX");
       position.y = currentSettings.getFloat("gaugePosY");
 
@@ -34,7 +38,7 @@ namespace KerboKatz
 
     private void onUnpause()
     {
-      lastGametimeToRealtimeCheck = Time.realtimeSinceStartup;
+      nextGametimeToRealtimeCheck = Time.realtimeSinceStartup;
       thisTime = Time.time;
       ThisRealTime = Time.realtimeSinceStartup;
     }
@@ -46,14 +50,18 @@ namespace KerboKatz
 
     public void FixedUpdate()
     {
-      if (lastGametimeToRealtimeCheck + 0.25f < Time.realtimeSinceStartup)
+      if (nextGametimeToRealtimeCheck > Time.realtimeSinceStartup)
       {
-        lastGametimeToRealtimeCheck = Time.realtimeSinceStartup;
+        nextGametimeToRealtimeCheck = Time.realtimeSinceStartup + currentSettings.getFloat("refreshRate");
         lastTime = thisTime;
         thisTime = Time.time;
         lastRealTime = ThisRealTime;
         ThisRealTime = Time.realtimeSinceStartup;
         gameTimeToRealtime = Mathf.Round((thisTime - lastTime) / (ThisRealTime - lastRealTime) * 100);
+      }
+      else if (nextGametimeToRealtimeCheck == 0)
+      {
+        nextGametimeToRealtimeCheck = Time.realtimeSinceStartup + currentSettings.getFloat("refreshRate");
       }
     }
 

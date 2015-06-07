@@ -20,6 +20,8 @@ namespace KerboKatz
     private GUIStyle toggleStyle;
     private bool useVSync;
     private GUIStyle sortTextStyle;
+    private bool disableMod;
+    private bool dontLimit;
     private void InitStyle()
     {
       backgroundFPS = currentSettings.getFloat("backgroundFPS");
@@ -68,8 +70,25 @@ namespace KerboKatz
     {
       maxActiveFPS = 120;
       GUILayout.BeginVertical();
-      activeFPS = Utilities.UI.createSlider("Focused FPS", activeFPS, 5, maxActiveFPS, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game is active.");
-      backgroundFPS = Utilities.UI.createSlider("Background FPS", backgroundFPS, 0, maxActiveFPS, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game isn't focused. Set to 0 to pause any simulation anything else will cause the game to run slower.", activeFPS);
+
+      if (Utilities.UI.createToggle("Disable", disableMod, toggleStyle))
+      {
+        disableMod = true;
+      }
+      else
+      {
+        disableMod = false;
+      }
+      if (Utilities.UI.createToggle("Don't limit FPS", dontLimit, toggleStyle))
+      {
+        dontLimit = true;
+      }
+      else
+      {
+        dontLimit = false;
+      }
+      activeFPS = Utilities.UI.createSlider("Focused FPS", activeFPS, 5, maxActiveFPS, 1, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game is active.");
+      backgroundFPS = Utilities.UI.createSlider("Background FPS", backgroundFPS, 0, maxActiveFPS, 1, textStyle, numberFieldStyle, horizontalSlider, horizontalSliderThumb, "FPS limit while the game isn't focused. Set to 0 to pause any simulation anything else will cause the game to run slower.", activeFPS);
 
       createVsyncOption();
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected, sortTextStyle);
@@ -86,6 +105,8 @@ namespace KerboKatz
       if (Utilities.UI.createButton("Save", buttonStyle))
       {
         currentSettings.set("useVSync", useVSync);
+        currentSettings.set("disableMod", disableMod);
+        currentSettings.set("dontLimit", dontLimit);
         currentSettings.set("activeFPS", activeFPS);
         currentSettings.set("backgroundFPS", backgroundFPS);
         updateToolbarBool();

@@ -17,7 +17,14 @@ namespace KerboKatz
     private Rectangle settingsWindowRect = new Rectangle(Rectangle.updateType.Cursor);
     private static int changePositionWindowID = Utilities.UI.getNewWindowID;
     private static int settingsWindowID = Utilities.UI.getNewWindowID;
+    private GUIStyle sortTextStyle;
+    private GUIStyle sortOptionTextStyle;
 
+    int anchorOptionSelected = 4;
+    private float refreshRate;
+    private GUIStyle textStyle;
+    private GUIStyle numberFieldStyle;
+    private GUIStyle horizontalSlider;
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -44,6 +51,34 @@ namespace KerboKatz
 
       moveHere = new GUIStyle(gaugeStyle);
       moveHere.alignment = TextAnchor.UpperLeft;
+
+      sortTextStyle = new GUIStyle(HighLogic.Skin.label);
+      sortTextStyle.margin.top = 2;
+      sortTextStyle.padding.setToZero();
+      sortTextStyle.fixedWidth = 100;
+
+      sortOptionTextStyle = new GUIStyle(sortTextStyle);
+      sortOptionTextStyle.margin.left = 0;
+      sortOptionTextStyle.padding.left = 0;
+      sortOptionTextStyle.fixedWidth = 80;
+      sortOptionTextStyle.alignment = TextAnchor.MiddleCenter;
+      Utilities.UI.setAnchorPosition(gaugeStyle, anchorOptionSelected);
+
+      textStyle = new GUIStyle(HighLogic.Skin.label);
+      textStyle.fixedWidth = 227;
+      textStyle.margin.left = 10;
+
+      numberFieldStyle = new GUIStyle(HighLogic.Skin.box);
+      numberFieldStyle.fixedWidth = 75;
+      numberFieldStyle.fixedHeight = 22;
+      numberFieldStyle.alignment = TextAnchor.MiddleCenter;
+      numberFieldStyle.padding.right = 7;
+      numberFieldStyle.margin.top = 5;
+
+      horizontalSlider = new GUIStyle(HighLogic.Skin.horizontalSlider);
+      horizontalSlider.fixedWidth = 175;
+      horizontalSlider.margin.top += 7;
+
 
       initStyle = true;
     }
@@ -97,6 +132,9 @@ namespace KerboKatz
         hideOnUIHidden = false;
       }
       GUILayout.BeginVertical();
+
+      refreshRate = Utilities.UI.createSlider("Refresh rate", refreshRate, 0, 5, 0.125f, textStyle, numberFieldStyle, horizontalSlider, HighLogic.Skin.horizontalSliderThumb);
+      Utilities.UI.createOptionSwitcher("Anchor Gauge:", Utilities.UI.anchorOptions, ref anchorOptionSelected, sortTextStyle, sortOptionTextStyle);
       Utilities.UI.createOptionSwitcher("Use:", Toolbar.toolbarOptions, ref toolbarSelected);
 
       GUILayout.BeginHorizontal();
@@ -119,6 +157,7 @@ namespace KerboKatz
         currentSettings.set("gaugePosX", position.x);
         currentSettings.set("gaugePosY", position.y);
         currentSettings.set("hideOnUIHidden", hideOnUIHidden);
+        currentSettings.set("refreshRate", refreshRate);
         updateToolbarBool();
       }
       GUILayout.FlexibleSpace();

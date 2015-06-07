@@ -60,43 +60,61 @@ namespace KerboKatz
     {
       if ((!focusStatusBool && targetFrameRate == Application.targetFrameRate) || HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
         return;
-      if (focusStatus)
+
+      if (currentSettings.getBool("disableMod"))
       {
+        targetFrameRate = GameSettings.FRAMERATE_LIMIT;
+        QualitySettings.vSyncCount = GameSettings.SYNC_VBL;
         Application.runInBackground = true;
-        targetFrameRate = currentSettings.getInt("activeFPS");
       }
       else
       {
-        var backgroundFPS = currentSettings.getInt("backgroundFPS");
-        if (backgroundFPS > 0)
+
+        if (currentSettings.getBool("dontLimit"))
         {
-          targetFrameRate = backgroundFPS;
+          targetFrameRate = -1;
         }
         else
         {
-          Application.runInBackground = false;
+          if (focusStatus)
+          {
+            Application.runInBackground = true;
+            targetFrameRate = currentSettings.getInt("activeFPS");
+          }
+          else
+          {
+            var backgroundFPS = currentSettings.getInt("backgroundFPS");
+            if (backgroundFPS > 0)
+            {
+              targetFrameRate = backgroundFPS;
+            }
+            else
+            {
+              Application.runInBackground = false;
+            }
+          }
         }
-      }
-      if (currentSettings.getBool("useVSync"))
-      {
-        switch (targetFrameRate)
+        if (currentSettings.getBool("useVSync"))
         {
-          case 30:
-            QualitySettings.vSyncCount = 2;
-            break;
+          switch (targetFrameRate)
+          {
+            case 30:
+              QualitySettings.vSyncCount = 2;
+              break;
 
-          case 60:
-            QualitySettings.vSyncCount = 1;
-            break;
+            case 60:
+              QualitySettings.vSyncCount = 1;
+              break;
 
-          default:
-            QualitySettings.vSyncCount = 0;
-            break;
+            default:
+              QualitySettings.vSyncCount = 0;
+              break;
+          }
         }
-      }
-      else
-      {
-        QualitySettings.vSyncCount = 0;
+        else
+        {
+          QualitySettings.vSyncCount = 0;
+        }
       }
       Application.targetFrameRate = targetFrameRate;
       focusStatusBool = false;

@@ -3,7 +3,7 @@
 namespace KerboKatz
 {
   [KSPAddon(KSPAddon.Startup.Flight, false)]
-  public class DisableTempGagues : MonoBehaviour
+  public class DisableTempGauges : MonoBehaviour
   {
     public void Update()
     {
