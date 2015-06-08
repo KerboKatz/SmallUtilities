@@ -24,8 +24,6 @@ namespace KerboKatz
     private bool dontLimit;
     private void InitStyle()
     {
-      backgroundFPS = currentSettings.getFloat("backgroundFPS");
-      activeFPS = currentSettings.getFloat("activeFPS");
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
       settingsWindowStyle.fixedWidth = 300;
 

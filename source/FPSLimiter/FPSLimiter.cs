@@ -27,6 +27,14 @@ namespace KerboKatz
       currentSettings.setDefault("backgroundFPS", "10");
       currentSettings.setDefault("useVSync", "false");
       currentSettings.setDefault("useToolbar", "true");
+      currentSettings.setDefault("disableMod", "false");
+      currentSettings.setDefault("dontLimit", "false");
+
+      backgroundFPS = currentSettings.getFloat("backgroundFPS");
+      activeFPS = currentSettings.getFloat("activeFPS");
+      dontLimit = currentSettings.getBool("dontLimit");
+      disableMod = currentSettings.getBool("disableMod");
+      useVSync = currentSettings.getBool("useVSync");
 
       settingsWindowRect.x = currentSettings.getFloat("settingsSettingsRectX");
       settingsWindowRect.y = currentSettings.getFloat("settingsSettingsRectY");

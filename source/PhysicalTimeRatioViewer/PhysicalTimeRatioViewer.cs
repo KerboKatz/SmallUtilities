@@ -17,7 +17,7 @@ namespace KerboKatz
       modName = "PhysicalTimeRatioViewer";
       displayName = "Physical time ratio viewer";
       tooltip = "Use left click to show/hide the physical time ratio viewer overlay.\n Use right click to open the settings menu.";
-      requiresUtilities = new Version(1, 2, 0);
+      requiresUtilities = new Version(1, 2, 10);
     }
 
     protected override void Started()
@@ -29,6 +29,7 @@ namespace KerboKatz
       refreshRate = currentSettings.getFloat("refreshRate");
       position.x = currentSettings.getFloat("gaugePosX");
       position.y = currentSettings.getFloat("gaugePosY");
+      hideOnUIHidden = currentSettings.getBool("hideOnUIHidden");
 
       setIcon(Utilities.getTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);
@@ -50,7 +51,7 @@ namespace KerboKatz
 
     public void FixedUpdate()
     {
-      if (nextGametimeToRealtimeCheck > Time.realtimeSinceStartup)
+      if (nextGametimeToRealtimeCheck < Time.realtimeSinceStartup)
       {
         nextGametimeToRealtimeCheck = Time.realtimeSinceStartup + currentSettings.getFloat("refreshRate");
         lastTime = thisTime;
@@ -58,10 +59,6 @@ namespace KerboKatz
         lastRealTime = ThisRealTime;
         ThisRealTime = Time.realtimeSinceStartup;
         gameTimeToRealtime = Mathf.Round((thisTime - lastTime) / (ThisRealTime - lastRealTime) * 100);
-      }
-      else if (nextGametimeToRealtimeCheck == 0)
-      {
-        nextGametimeToRealtimeCheck = Time.realtimeSinceStartup + currentSettings.getFloat("refreshRate");
       }
     }
 

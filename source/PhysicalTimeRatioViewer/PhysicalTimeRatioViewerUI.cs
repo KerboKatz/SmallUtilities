@@ -158,6 +158,9 @@ namespace KerboKatz
         currentSettings.set("gaugePosY", position.y);
         currentSettings.set("hideOnUIHidden", hideOnUIHidden);
         currentSettings.set("refreshRate", refreshRate);
+        currentSettings.set("anchorOptionSelected", anchorOptionSelected);
+
+        Utilities.UI.setAnchorPosition(gaugeStyle, anchorOptionSelected);
         updateToolbarBool();
       }
       GUILayout.FlexibleSpace();

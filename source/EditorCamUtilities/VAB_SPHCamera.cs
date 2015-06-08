@@ -29,7 +29,7 @@ namespace KerboKatz
       modName = "EditorCamUtilities";
       displayName = "Editor Camera Extension";
       tooltip = "Use left click to toggle between VAB and SPH Camera.\n Use right click to open the settings menu.";
-      requiresUtilities = new Version(1, 2, 2);
+      requiresUtilities = new Version(1, 2, 10);
     }
 
     protected override void Started()

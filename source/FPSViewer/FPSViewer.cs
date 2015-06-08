@@ -11,7 +11,7 @@ namespace KerboKatz
       modName = "FPSViewer";
       displayName = "FPS Viewer";
       tooltip = "Use left click to show/hide the fps overlay.\n Use right click to open the settings menu.";
-      requiresUtilities = new Version(1, 2, 0);
+      requiresUtilities = new Version(1, 2, 10);
     }
 
     protected override void Started()
@@ -23,6 +23,7 @@ namespace KerboKatz
       position.y = currentSettings.getFloat("fpsPosY");
       showMinFPS = currentSettings.getBool("showMinFPS");
       showMaxFPS = currentSettings.getBool("showMaxFPS");
+      hideOnUIHidden = currentSettings.getBool("hideOnUIHidden");
 
       setIcon(Utilities.getTexture("icon", "SmallUtilities/FPSViewer/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);

@@ -1,3 +1,13 @@
+v 1.2.1
+ * PhysicalTimeRatioViewer fixes:
+  * Refresh rate not being applied correctly
+  * Anchor position not being applied
+  * Hide on hidden UI radio button getting reset to false after reload of settings
+ * Fixed FPSViewer Hide on hidden UI radio button getting reset to false after reload of settings
+ * FPSLimiter fixes:
+  * VSync radio button getting reset to false after reload of settings
+  * Disable radio button getting reset to false after reload of settings
+  * Don't limit FPS radio button getting reset to false after reload of settings
 v 1.2.0
  * Added AutoBalancingLandingLeg
  * PhysicalTimeRatioViewer:
