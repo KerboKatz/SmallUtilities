@@ -1,3 +1,7 @@
+v 1.2.2
+ * Changed AutoBalancingLandingLeg to upgrade stock landinglegs
+ * AutoBalancingLandingLeg now modifies the spring position instead of spring value for much simpler code
+ * Added option to EditorCamUtilities to extend the boundries of the VAB & SPH
 v 1.2.1
  * PhysicalTimeRatioViewer fixes:
   * Refresh rate not being applied correctly

@@ -23,6 +23,8 @@ namespace KerboKatz
     private ScreenMessage SPHControlMessage;
     private Vector3 OriginalSize;
     private Vector2 heightLimits;
+    private EditorFacility editorMode;
+    private bool initDefaults;
 
     public EditorCamUtilities()
     {
@@ -45,6 +47,7 @@ namespace KerboKatz
       rotationSpeed = currentSettings.getFloat("rotationSpeed");
       HeightSpeed = currentSettings.getFloat("HeightSpeed");
       zoomSpeed = currentSettings.getFloat("zoomSpeed");
+      extendHangar = currentSettings.getBool("extendHanger");
 
       setIcon(Utilities.getTexture("EditorCamUtilities", "SmallUtilities/EditorCamUtilities/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.VAB);
@@ -134,7 +137,7 @@ namespace KerboKatz
         if (Input.GetMouseButton(2) && vabControls)
         {
           //zoom in/out
-          distance -= Input.GetAxis("Mouse Y") * zoomSpeed * (MouseSensitivity*10);
+          distance -= Input.GetAxis("Mouse Y") * zoomSpeed * (MouseSensitivity * 10);
           isCamUpdateRequired = true;
         }
         #region keyboard controls
@@ -195,6 +198,50 @@ namespace KerboKatz
         }
 
       }
+      checkSaveLoadPos();
+    }
+
+    private void checkSaveLoadPos()
+    {
+      //Utilities.debug(modName, EditorCamera.pivotPosition.x + "_" + EditorCamera.pivotPosition.y);
+      if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftAlt))
+      {
+        InputLockManager.SetControlLock(ControlTypes.EDITOR_GIZMO_TOOLS,modName+"GizmoLockCtrlAlt");
+        for (int key = 0; key < 10; key++)
+        {
+          if (Input.GetKeyDown("" + key))
+          {
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+              camFocus.x = currentSettings.getFloat(key + "OffsetX");
+              camFocus.y = currentSettings.getFloat(key + "ScrollHeight");
+              camFocus.z = currentSettings.getFloat(key + "OffsetZ");
+              if (camFocus.x == 0 && camFocus.y == 0 && camFocus.z == 0)
+                return;
+              Utilities.debug(modName, "Loading: " + key);
+              EditorCamera.PlaceCamera(camFocus, currentSettings.getFloat(key + "Distance"));
+              EditorCamera.camHdg = currentSettings.getFloat(key + "Heading");
+              EditorCamera.camPitch = currentSettings.getFloat(key + "Pitch");
+            }
+            else
+            {
+              Utilities.debug(modName, "Saving: " + key);
+              currentSettings.set(key + "Pitch", EditorCamera.camPitch);
+              currentSettings.set(key + "Heading", EditorCamera.camHdg);
+              currentSettings.set(key + "Distance", EditorCamera.Distance);
+              currentSettings.set(key + "OffsetX", EditorCamera.pivotPosition.x);
+              currentSettings.set(key + "ScrollHeight", EditorCamera.scrollHeight);
+              currentSettings.set(key + "OffsetZ", EditorCamera.pivotPosition.z);
+            }
+            return;
+          }
+
+        }
+      }
+      else
+      {
+        InputLockManager.RemoveControlLock(modName + "GizmoLockCtrlAlt");
+      }
     }
 
     private void updateCam()
@@ -235,16 +282,18 @@ namespace KerboKatz
     private void initMod()
     {
       EditorDriver.fetch.sphCamera.enabled = true;
-      EditorCamera = EditorDriver.fetch.sphCamera;      
+      EditorCamera = EditorDriver.fetch.sphCamera;
 
       if (Utilities.getEditorScene() == "VAB")
       {
+        editorMode = EditorFacility.VAB;
         EditorDriver.fetch.vabCamera.enabled = true;
         vabControls = true;
         heightLimits = new Vector2(EditorDriver.fetch.vabCamera.minHeight, EditorDriver.fetch.vabCamera.maxHeight);
       }
       else
       {
+        editorMode = EditorFacility.SPH;
         vabControls = false;
         heightLimits = new Vector2(EditorDriver.fetch.sphCamera.minHeight, EditorDriver.fetch.sphCamera.maxHeight);
       }
@@ -279,19 +328,29 @@ namespace KerboKatz
       GameSettings.CAMERA_ORBIT_RIGHT.setNone();
       EditorCamUtilitiesExtensions.setSaveFileStatusToStarted();
     }
-
+    private void setHeightLimits(float maxDisplaceX, float heightLimit, float maxDisplaceZ)
+    {
+      heightLimits.y = heightLimit;
+      EditorDriver.fetch.sphCamera.maxHeight = heightLimit;
+      EditorDriver.fetch.sphCamera.maxDisplaceX = maxDisplaceX;
+      EditorDriver.fetch.sphCamera.maxDisplaceZ = maxDisplaceZ;
+      if (EditorDriver.fetch.vabCamera.enabled)
+      {
+        EditorDriver.fetch.vabCamera.maxHeight = heightLimit;
+      }
+    }
     private void updateBounds(object state)
     {
-      while (EditorBounds.Instance == null && EditorBounds.Instance.cameraOffsetBounds == null)
+      while (EditorBounds.Instance == null || EditorBounds.Instance.cameraOffsetBounds == null || EditorBounds.Instance.cameraOffsetBounds.size == null)
       {
         Thread.Sleep(50);
       }
-      if (OriginalSize==null)
+      if (!initDefaults)
       {
-        OriginalSize=EditorBounds.Instance.cameraOffsetBounds.size;
+        initDefault();
       }
       var size = EditorBounds.Instance.cameraOffsetBounds.size;
-      
+
       if (vabControls)
       {
         size.x = 0;
@@ -310,7 +369,71 @@ namespace KerboKatz
           size.z = OriginalSize.z;
         }
       }
-      EditorBounds.Instance.cameraOffsetBounds = new Bounds(EditorBounds.Instance.cameraOffsetBounds.center, size);
+
+      if (currentSettings.getBool("extendHanger"))
+      {
+        if (editorMode == EditorFacility.SPH)
+        {
+          size.x = currentSettings.getFloat("extendSPHX");
+          size.y = currentSettings.getFloat("extendSPHY");
+          size.z = currentSettings.getFloat("extendSPHZ");
+        }
+        else if (editorMode == EditorFacility.VAB)
+        {
+          size.x = currentSettings.getFloat("extendVABX");
+          size.y = currentSettings.getFloat("extendVABY");
+          size.z = currentSettings.getFloat("extendVABZ");
+        }
+      }
+      else
+      {
+        if (!vabControls)
+        {
+          if (OriginalSize.x == 0 && OriginalSize.z == 0)
+          {
+            size.x = size.y;
+            size.z = size.y;
+          }
+          else
+          {
+            size.x = OriginalSize.x;
+            size.z = OriginalSize.z;
+          }
+        }
+      }
+      EditorBounds.Instance.constructionBounds.extents = size;
+      if (vabControls)
+      {
+        size.x = 0;
+        size.z = 0;
+      }
+      EditorBounds.Instance.cameraOffsetBounds.extents = size;
+    }
+
+    private void initDefault()
+    {
+      OriginalSize = EditorBounds.Instance.cameraOffsetBounds.size;
+      if (editorMode == EditorFacility.VAB)
+      {
+        currentSettings.setDefault("extendVABX", OriginalSize.y + "");
+        currentSettings.setDefault("extendVABY", OriginalSize.y + "");
+        currentSettings.setDefault("extendVABZ", OriginalSize.y + "");
+        extendVAB.x = currentSettings.getFloat("extendVABX");
+        extendVAB.y = currentSettings.getFloat("extendVABY");
+        extendVAB.z = currentSettings.getFloat("extendVABZ");
+        setHeightLimits(extendVAB.x, extendVAB.y, extendVAB.z);
+      }
+      else
+      {
+        currentSettings.setDefault("extendSPHX", OriginalSize.x + "");
+        currentSettings.setDefault("extendSPHY", OriginalSize.y + "");
+        currentSettings.setDefault("extendSPHZ", OriginalSize.z + "");
+        extendSPH.x = currentSettings.getFloat("extendSPHX");
+        extendSPH.y = currentSettings.getFloat("extendSPHY");
+        extendSPH.z = currentSettings.getFloat("extendSPHZ");
+        setHeightLimits(extendSPH.x, extendSPH.y, extendSPH.z);
+      }
+      initDefaults = true;
     }
 
     protected override void afterDestroy()
