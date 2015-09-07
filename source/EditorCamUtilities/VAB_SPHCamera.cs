@@ -203,10 +203,16 @@ namespace KerboKatz
 
     private void checkSaveLoadPos()
     {
-      //Utilities.debug(modName, EditorCamera.pivotPosition.x + "_" + EditorCamera.pivotPosition.y);
+      /*
+      //this for some reason doesn't seem to work. The lock is active but the gizmos still get selected.
+      if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.LeftAlt))
+        InputLockManager.SetControlLock(ControlTypes.EDITOR_GIZMO_TOOLS, modName + "GizmoLockCtrlAlt");
+      
+      if (Input.GetKeyUp(KeyCode.LeftControl) || Input.GetKeyUp(KeyCode.LeftAlt))
+        InputLockManager.RemoveControlLock(modName + "GizmoLockCtrlAlt");
+      */
       if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftAlt))
       {
-        InputLockManager.SetControlLock(ControlTypes.EDITOR_GIZMO_TOOLS,modName+"GizmoLockCtrlAlt");
         for (int key = 0; key < 10; key++)
         {
           if (Input.GetKeyDown("" + key))
@@ -219,9 +225,7 @@ namespace KerboKatz
               if (camFocus.x == 0 && camFocus.y == 0 && camFocus.z == 0)
                 return;
               Utilities.debug(modName, "Loading: " + key);
-              EditorCamera.PlaceCamera(camFocus, currentSettings.getFloat(key + "Distance"));
-              EditorCamera.camHdg = currentSettings.getFloat(key + "Heading");
-              EditorCamera.camPitch = currentSettings.getFloat(key + "Pitch");
+              setCameraPosition(camFocus, currentSettings.getFloat(key + "Distance"), currentSettings.getFloat(key + "Heading"), currentSettings.getFloat(key + "Pitch"));
             }
             else
             {
@@ -235,12 +239,7 @@ namespace KerboKatz
             }
             return;
           }
-
         }
-      }
-      else
-      {
-        InputLockManager.RemoveControlLock(modName + "GizmoLockCtrlAlt");
       }
     }
 
@@ -258,20 +257,36 @@ namespace KerboKatz
       }
       camFocus.y += EditorCamera.scrollHeight;
       camFocus.y = Mathf.Clamp(camFocus.y, heightLimits.x, heightLimits.y);
-      EditorCamera.PlaceCamera(camFocus, EditorCamera.Distance + distance);
-      EditorCamera.camHdg += heading;
-      EditorCamera.camPitch += pitch;
+      distance += EditorCamera.Distance;
+      setCameraPosition(camFocus, distance, EditorCamera.camHdg + heading, EditorCamera.camPitch + pitch);
+    }
+
+    private void setCameraPosition(Vector3 camFocus, float distance, float heading,float pitch)
+    {
+      EditorCamera.PlaceCamera(camFocus, distance);
+      EditorCamera.camHdg = heading;
+      EditorCamera.camPitch = pitch;
+      checkAndUpdateVABCamera();
+      resetVariables();
+    }
+
+    private void resetVariables()
+    {
+
+      camFocus.y = 0;
+      pitch = 0;
+      heading = 0;
+      distance = 0;
+    }
+
+    private void checkAndUpdateVABCamera()
+    {
       if (EditorDriver.fetch.vabCamera.enabled)
       {
         EditorDriver.fetch.vabCamera.PlaceCamera(camFocus, EditorCamera.Distance);
         EditorDriver.fetch.vabCamera.camHdg = EditorCamera.camHdg;
         EditorDriver.fetch.vabCamera.camPitch = EditorCamera.camPitch;
       }
-
-      camFocus.y = 0;
-      pitch = 0;
-      heading = 0;
-      distance = 0;
     }
 
     private void uninitMod()
@@ -351,13 +366,6 @@ namespace KerboKatz
       }
       var size = EditorBounds.Instance.cameraOffsetBounds.size;
 
-      if (vabControls)
-      {
-        size.x = 0;
-        size.z = 0;
-      }
-      else
-      {
         if (OriginalSize.x == 0 && OriginalSize.z == 0)
         {
           size.x = size.y;
@@ -368,8 +376,6 @@ namespace KerboKatz
           size.x = OriginalSize.x;
           size.z = OriginalSize.z;
         }
-      }
-
       if (currentSettings.getBool("extendHanger"))
       {
         if (editorMode == EditorFacility.SPH)
@@ -384,6 +390,7 @@ namespace KerboKatz
           size.y = currentSettings.getFloat("extendVABY");
           size.z = currentSettings.getFloat("extendVABZ");
         }
+        EditorBounds.Instance.constructionBounds.extents = size;
       }
       else
       {
@@ -401,7 +408,7 @@ namespace KerboKatz
           }
         }
       }
-      EditorBounds.Instance.constructionBounds.extents = size;
+      //EditorBounds.Instance.constructionBounds.extents = size;
       if (vabControls)
       {
         size.x = 0;
@@ -412,9 +419,9 @@ namespace KerboKatz
 
     private void initDefault()
     {
-      OriginalSize = EditorBounds.Instance.cameraOffsetBounds.size;
       if (editorMode == EditorFacility.VAB)
       {
+        OriginalSize = EditorBounds.Instance.cameraOffsetBounds.size;
         currentSettings.setDefault("extendVABX", OriginalSize.y + "");
         currentSettings.setDefault("extendVABY", OriginalSize.y + "");
         currentSettings.setDefault("extendVABZ", OriginalSize.y + "");
@@ -425,6 +432,7 @@ namespace KerboKatz
       }
       else
       {
+        OriginalSize = EditorBounds.Instance.constructionBounds.size;
         currentSettings.setDefault("extendSPHX", OriginalSize.x + "");
         currentSettings.setDefault("extendSPHY", OriginalSize.y + "");
         currentSettings.setDefault("extendSPHZ", OriginalSize.z + "");

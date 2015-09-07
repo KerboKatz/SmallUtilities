@@ -1,3 +1,7 @@
+v 1.2.3
+ * Added save and load of camera positions to EditorCamUtilities
+ * Fixed bug in AutoBalancingLandingLeg that caused the legs not to be attachable if in symmetry mode
+ * Fixed bug in EditorCamUtilities that would not allow any parts to be selected
 v 1.2.2
  * Changed AutoBalancingLandingLeg to upgrade stock landinglegs
  * AutoBalancingLandingLeg now modifies the spring position instead of spring value for much simpler code

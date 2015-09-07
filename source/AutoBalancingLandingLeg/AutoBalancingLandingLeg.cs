@@ -25,7 +25,7 @@ namespace KerboKatz
     public override void OnInitialize()
     {
       wheelCollider = part.FindModelTransform(wheelColliderName).GetComponent<WheelCollider>();
-      updateVesselLegs(vessel);
+      updateVesselLegs(null);
       if (offset.y != 0)
         wheelCollider.transform.position -= offset.y * wheelCollider.transform.up;
       GameEvents.onVesselChange.Add(updateVesselLegs);
@@ -38,7 +38,8 @@ namespace KerboKatz
 
     private void updateVesselLegs(Vessel data)
     {
-      allVesselLegs = vessel.FindPartModulesImplementing<ModuleAutoBalancingLandingLegUpgrade>();
+      if (vessel != null)
+        allVesselLegs = vessel.FindPartModulesImplementing<ModuleAutoBalancingLandingLegUpgrade>();
     }
 
     public void FixedUpdate()
