@@ -30,6 +30,7 @@ namespace KerboKatz
       position.x = currentSettings.getFloat("gaugePosX");
       position.y = currentSettings.getFloat("gaugePosY");
       hideOnUIHidden = currentSettings.getBool("hideOnUIHidden");
+      ShowMaximumDeltaTime = currentSettings.getBool("ShowMaximumDeltaTime");
 
       setIcon(Utilities.getTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);

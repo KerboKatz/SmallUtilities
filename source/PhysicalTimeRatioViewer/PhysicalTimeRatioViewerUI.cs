@@ -25,6 +25,7 @@ namespace KerboKatz
     private GUIStyle textStyle;
     private GUIStyle numberFieldStyle;
     private GUIStyle horizontalSlider;
+    private bool ShowMaximumDeltaTime;
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -102,7 +103,12 @@ namespace KerboKatz
       {
         return;
       }
-      GUI.Label(position.rect, gameTimeToRealtime + "%", gaugeStyle);
+      string label = gameTimeToRealtime + "%";
+      if (currentSettings.getBool("ShowMaximumDeltaTime"))
+      {
+        label = label+"\n"+Time.maximumDeltaTime;
+      }
+      GUI.Label(position.rect, label, gaugeStyle);
       if (currentSettings.getBool("changePosition"))
       {
         GUI.depth = int.MaxValue;
@@ -131,6 +137,14 @@ namespace KerboKatz
       {
         hideOnUIHidden = false;
       }
+      if (Utilities.UI.createToggle("Show maximumDeltaTime", ShowMaximumDeltaTime, toggleStyle))
+      {
+        ShowMaximumDeltaTime = true;
+      }
+      else
+      {
+        ShowMaximumDeltaTime = false;
+      }
       GUILayout.BeginVertical();
 
       refreshRate = Utilities.UI.createSlider("Refresh rate", refreshRate, 0, 5, 0.125f, textStyle, numberFieldStyle, horizontalSlider, HighLogic.Skin.horizontalSliderThumb);
@@ -157,6 +171,7 @@ namespace KerboKatz
         currentSettings.set("gaugePosX", position.x);
         currentSettings.set("gaugePosY", position.y);
         currentSettings.set("hideOnUIHidden", hideOnUIHidden);
+        currentSettings.set("ShowMaximumDeltaTime", ShowMaximumDeltaTime);
         currentSettings.set("refreshRate", refreshRate);
         currentSettings.set("anchorOptionSelected", anchorOptionSelected);
 

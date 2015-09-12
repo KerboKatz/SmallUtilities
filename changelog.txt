@@ -1,3 +1,5 @@
+v 1.2.4
+ * Added option to PhysicalTimeRatioViewer to show maximumDeltaTime
 v 1.2.3
  * Added save and load of camera positions to EditorCamUtilities
  * Fixed bug in AutoBalancingLandingLeg that caused the legs not to be attachable if in symmetry mode
