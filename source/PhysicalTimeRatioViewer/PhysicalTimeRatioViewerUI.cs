@@ -26,6 +26,10 @@ namespace KerboKatz
     private GUIStyle numberFieldStyle;
     private GUIStyle horizontalSlider;
     private bool ShowMaximumDeltaTime;
+    private bool changeMaximumDeltaTime;
+    private bool changeMaximumDeltaTimeLiveEdit;
+    private float maximumDeltaTime;
+
     private void InitStyle()
     {
       settingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
@@ -106,7 +110,7 @@ namespace KerboKatz
       string label = gameTimeToRealtime + "%";
       if (currentSettings.getBool("ShowMaximumDeltaTime"))
       {
-        label = label+"\n"+Time.maximumDeltaTime;
+        label = label + "\n" + Time.maximumDeltaTime;
       }
       GUI.Label(position.rect, label, gaugeStyle);
       if (currentSettings.getBool("changePosition"))
@@ -145,6 +149,24 @@ namespace KerboKatz
       {
         ShowMaximumDeltaTime = false;
       }
+      if (Utilities.UI.createToggle("Change maximumDeltaTime", changeMaximumDeltaTime, toggleStyle))
+      {
+        changeMaximumDeltaTime = true;
+        if (Utilities.UI.createToggle("Live edit", changeMaximumDeltaTimeLiveEdit, toggleStyle))
+        {
+          changeMaximumDeltaTimeLiveEdit = true;
+          Time.maximumDeltaTime = Utilities.UI.createSlider("maximumDeltaTime", Time.maximumDeltaTime, 0.02f, 0.2f, 0.01f, textStyle, numberFieldStyle, horizontalSlider, HighLogic.Skin.horizontalSliderThumb, "Lower values will allow for higher frame rates on the cost of less accurate physics and slower gameplay while allowing for a higher frame rate to be archived. Higher values will do the opposite. Potentially lowering the fps but keeping the time at around the same speed as the real clock");
+        }
+        else
+        {
+          changeMaximumDeltaTimeLiveEdit = false;
+          maximumDeltaTime = Utilities.UI.createSlider("maximumDeltaTime", maximumDeltaTime, 0.02f, 0.2f, 0.01f, textStyle, numberFieldStyle, horizontalSlider, HighLogic.Skin.horizontalSliderThumb, "Lower values will allow for higher frame rates on the cost of less accurate physics and slower gameplay while allowing for a higher frame rate to be archived. Higher values will do the opposite. Potentially lowering the fps but keeping the time at around the same speed as the real clock");
+        }
+      }
+      else
+      {
+        changeMaximumDeltaTime = false;
+      }
       GUILayout.BeginVertical();
 
       refreshRate = Utilities.UI.createSlider("Refresh rate", refreshRate, 0, 5, 0.125f, textStyle, numberFieldStyle, horizontalSlider, HighLogic.Skin.horizontalSliderThumb);
@@ -175,6 +197,10 @@ namespace KerboKatz
         currentSettings.set("refreshRate", refreshRate);
         currentSettings.set("anchorOptionSelected", anchorOptionSelected);
 
+        currentSettings.set("changeMaximumDeltaTime", changeMaximumDeltaTime);
+        currentSettings.set("changeMaximumDeltaTimeLiveEdit", changeMaximumDeltaTimeLiveEdit);
+        currentSettings.set("changeMaximumDeltaTime", changeMaximumDeltaTime);
+        changeMaxDeltaTime();
         Utilities.UI.setAnchorPosition(gaugeStyle, anchorOptionSelected);
         updateToolbarBool();
       }
@@ -186,6 +212,22 @@ namespace KerboKatz
       GUILayout.EndHorizontal();
       GUILayout.EndVertical();
       Utilities.UI.updateTooltipAndDrag();
+    }
+
+    private void changeMaxDeltaTime()
+    {
+      if (changeMaximumDeltaTime)
+      {
+        if (!changeMaximumDeltaTimeLiveEdit)
+        {
+          currentSettings.set("maximumDeltaTime", maximumDeltaTime);
+          Time.maximumDeltaTime = maximumDeltaTime;
+        }
+        else
+        {
+          currentSettings.set("maximumDeltaTime", Time.maximumDeltaTime);
+        }
+      }
     }
 
     private void changePosition(int id)

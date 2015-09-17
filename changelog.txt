@@ -1,3 +1,5 @@
+v 1.2.5
+ * Added options to PhysicalTimeRatioViewer to manipulate maximumDeltaTime
 v 1.2.4
  * Added option to PhysicalTimeRatioViewer to show maximumDeltaTime
 v 1.2.3

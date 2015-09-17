@@ -32,6 +32,12 @@ namespace KerboKatz
       hideOnUIHidden = currentSettings.getBool("hideOnUIHidden");
       ShowMaximumDeltaTime = currentSettings.getBool("ShowMaximumDeltaTime");
 
+      changeMaximumDeltaTime = currentSettings.getBool("changeMaximumDeltaTime");
+      changeMaximumDeltaTimeLiveEdit = currentSettings.getBool("changeMaximumDeltaTimeLiveEdit");
+      changeMaximumDeltaTime = currentSettings.getBool("changeMaximumDeltaTime");
+      maximumDeltaTime = currentSettings.getFloat("maximumDeltaTime");
+      changeMaxDeltaTime();
+
       setIcon(Utilities.getTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures"));
       setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);
       GameEvents.onGamePause.Add(onPause);
