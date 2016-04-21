@@ -130,9 +130,7 @@ namespace KerboKatz.FPSV
 
     private void OnToolbar()
     {
-      var leftAlt = Input.GetKey(KeyCode.LeftAlt);
-      Log(leftAlt , " OnToolbar");
-      if (leftAlt)
+      if (Input.GetMouseButtonUp(1))
       {
         settings.showSettings = !settings.showSettings;
         Log("Set to: ", settings.showSettings);
