@@ -1,75 +1,131 @@
-﻿using System;
+﻿using KerboKatz.Assets;
+using KerboKatz.Extensions;
+using KerboKatz.Toolbar;
+using KSP.UI;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
-namespace KerboKatz
+namespace KerboKatz.FPSL
 {
   [KSPAddon(KSPAddon.Startup.Instantly, true)]
-  public partial class FPSLimiter : KerboKatzBase
+  public class FPSLimiter : KerboKatzBase<Settings>, IToolbar
   {
     private bool focusStatus = true;
-    private bool focusStatusBool = true;
+    private bool isDirty = true;
+    private List<GameScenes> _activeScences = new List<GameScenes>() { GameScenes.EDITOR, GameScenes.FLIGHT, GameScenes.MAINMENU, GameScenes.PSYSTEM, GameScenes.SPACECENTER, GameScenes.TRACKSTATION };
+    private Sprite _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons");//Utilities.GetTexture("FPSLimiter", "SmallUtilities/FPSLimiter/Textures");
     private int targetFrameRate;
+    private Text currentFPSLabel;
+    private string settingsUIName;
+
+    //private int targetFrameRate;
+    #region init/destroy
     public FPSLimiter()
     {
       modName = "FPSLimiter";
       displayName = "FPS Limiter";
-      requiresUtilities = new Version(1, 2, 0);
+      settingsUIName = "FPSLimiter";
+      requiresUtilities = new Version(1, 3, 0);
+      ToolbarBase.instance.Add(this);
+      LoadSettings("SmallUtilities/FPSLimiter", "Settings");
+      Log("Init done!");
     }
-
-    protected override void Started()
+    public override void OnAwake()
     {
-      DontDestroyOnLoad(this);
-      currentSettings.load("SmallUtilities/FPSLimiter", "FPSLimiterSettings", modName);
-      currentSettings.setDefault("showSettings", "false");
-      currentSettings.setDefault("settingsSettingsRectX", "0");
-      currentSettings.setDefault("settingsSettingsRectY", "0");
-      currentSettings.setDefault("activeFPS", "35");
-      currentSettings.setDefault("backgroundFPS", "10");
-      currentSettings.setDefault("useVSync", "false");
-      currentSettings.setDefault("useToolbar", "true");
-      currentSettings.setDefault("disableMod", "false");
-      currentSettings.setDefault("dontLimit", "false");
-
-      backgroundFPS = currentSettings.getFloat("backgroundFPS");
-      activeFPS = currentSettings.getFloat("activeFPS");
-      dontLimit = currentSettings.getBool("dontLimit");
-      disableMod = currentSettings.getBool("disableMod");
-      useVSync = currentSettings.getBool("useVSync");
-
-      settingsWindowRect.x = currentSettings.getFloat("settingsSettingsRectX");
-      settingsWindowRect.y = currentSettings.getFloat("settingsSettingsRectY");
-
-      setAppLauncherScenes(ApplicationLauncher.AppScenes.ALWAYS);
-
+      LoadUI(settingsUIName);
       GameEvents.onGameSceneLoadRequested.Add(onGameSceneLoadRequested);
+      this.enabled = true;
+      DontDestroyOnLoad(this);
+      Log("Awake");
     }
-
     public void onGameSceneLoadRequested(GameScenes GameScene)
     {
       if (GameScene == GameScenes.MAINMENU)
       {
-        setIcon(Utilities.getTexture("FPSLimiter", "SmallUtilities/FPSLimiter/Textures"));
-        GameEvents.onGameSceneLoadRequested.Remove(onGameSceneLoadRequested);
+        _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons");//Utilities.GetTexture("icon", "SmallUtilities/FPSLimiter/Textures");
       }
+      //reload the ui on scene change
+      LoadUI(settingsUIName);
     }
-
-    protected override void beforeSaveOnDestroy()
+    protected override void AfterDestroy()
     {
       GameEvents.onGameSceneLoadRequested.Remove(onGameSceneLoadRequested);
-      if (currentSettings != null)
-      {
-        currentSettings.set("showSettings", false);
-        currentSettings.set("settingsSettingsRectX", settingsWindowRect.x);
-        currentSettings.set("settingsSettingsRectY", settingsWindowRect.y);
-      }
+      ToolbarBase.instance.Remove(this);
+      Log("AfterDestroy");
     }
+
+    #endregion
+    #region ui
+    protected override void OnUIElemntInit(UIData uiWindow)
+    {
+      var prefabWindow = uiWindow.gameObject.transform as RectTransform;
+      var content = prefabWindow.FindChild("Content");
+      currentFPSLabel = InitTextField(content.FindChild("CurrentFPS"), "Label", "");
+      InitInputField(content, "ActiveFPS", settings.active.ToString(), OnActiveFPSChange);
+      InitInputField(content, "BackgroundFPS", settings.background.ToString(), OnBackgroundFPSChange);
+      InitToggle(content, "VSync", settings.useVSync, OnVSyncChange);
+      InitToggle(content, "DisableMod", settings.disable, OnDisableMod);
+      InitToggle(content, "Debug", settings.debug, OnDebugChange);
+      
+    }
+
+    private void OnDebugChange(bool arg0)
+    {
+      settings.debug = arg0;
+      settings.Save();
+      Log("OnDebugChange");
+    }
+    private void OnDisableMod(bool arg0)
+    {
+      settings.disable = arg0;
+      settings.Save();
+      isDirty = true;
+      Log("OnDisableMod");
+    }
+
+    private void OnVSyncChange(bool arg0)
+    {
+      settings.useVSync = arg0;
+      settings.Save();
+      isDirty = true;
+      Log("OnVSyncChange");
+    }
+
+    private void OnActiveFPSChange(string arg0)
+    {
+      settings.active = arg0.ToInt();
+      settings.Save();
+      isDirty = true;
+      Log("OnActiveFPSChange");
+    }
+    private void OnBackgroundFPSChange(string arg0)
+    {
+      settings.background = arg0.ToInt();
+      settings.Save();
+      isDirty = true;
+      Log("OnBackgroundFPSChange");
+    }
+    #endregion
 
     public void Update()
     {
-      if ((!focusStatusBool && targetFrameRate == Application.targetFrameRate) || HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
+      if (currentFPSLabel != null)
+        currentFPSLabel.text = FPS.currentFPS.ToString();
+      if ((!isDirty && targetFrameRate == Application.targetFrameRate) || HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
+      {
+        if (HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
+        {
+          Application.targetFrameRate = -1;
+          QualitySettings.vSyncCount = 0;
+        }
         return;
-
-      if (currentSettings.getBool("disableMod"))
+      }
+      Application.targetFrameRate = 60;
+      QualitySettings.vSyncCount = 1;
+      if (settings.disable)//currentSettings.getBool("disableMod"))
       {
         targetFrameRate = GameSettings.FRAMERATE_LIMIT;
         QualitySettings.vSyncCount = GameSettings.SYNC_VBL;
@@ -77,32 +133,24 @@ namespace KerboKatz
       }
       else
       {
-
-        if (currentSettings.getBool("dontLimit"))
+        if (focusStatus)
         {
-          targetFrameRate = -1;
+          Application.runInBackground = true;
+          targetFrameRate = settings.active;
         }
         else
         {
-          if (focusStatus)
+          var backgroundFPS = settings.background;
+          if (backgroundFPS > 0)
           {
-            Application.runInBackground = true;
-            targetFrameRate = currentSettings.getInt("activeFPS");
+            targetFrameRate = backgroundFPS;
           }
           else
           {
-            var backgroundFPS = currentSettings.getInt("backgroundFPS");
-            if (backgroundFPS > 0)
-            {
-              targetFrameRate = backgroundFPS;
-            }
-            else
-            {
-              Application.runInBackground = false;
-            }
+            Application.runInBackground = false;
           }
         }
-        if (currentSettings.getBool("useVSync"))
+        if (settings.useVSync)
         {
           switch (targetFrameRate)
           {
@@ -125,25 +173,67 @@ namespace KerboKatz
         }
       }
       Application.targetFrameRate = targetFrameRate;
-      focusStatusBool = false;
+      isDirty = false;
     }
 
     private void OnApplicationFocus(bool focusStatus)
     {
       this.focusStatus = focusStatus;
-      focusStatusBool = true;
+      isDirty = true;
     }
 
-    protected override void onToolbar()
+    #region IToolbar
+    
+    public List<GameScenes> activeScences
     {
-      if (currentSettings.getBool("showSettings"))
+      get
       {
-        currentSettings.set("showSettings", false);
+        return _activeScences;
+      }
+    }
+
+    public UnityAction onClick
+    {
+      get
+      {
+        return OnToolbar;
+      }
+    }
+
+    private void OnToolbar()
+    {
+      var uiData = GetUIData(settingsUIName);
+      if (uiData == null || uiData.canvasGroup == null)
+        return;
+      settings.showSettings = !settings.showSettings;
+      if (settings.showSettings)
+      {
+        FadeCanvasGroup(uiData.canvasGroup, 1, settings.uiFadeSpeed);
       }
       else
       {
-        currentSettings.set("showSettings", true);
+        FadeCanvasGroup(uiData.canvasGroup, 0, settings.uiFadeSpeed);
+      }
+      settings.Save();
+    }
+
+
+    public Sprite icon
+    {
+      get
+      {
+        return _icon;
+      }
+      private set
+      {
+        if (_icon != value)
+        {
+          _icon = value;
+          ToolbarBase.UpdateIcon();
+        }
       }
     }
+
+    #endregion
   }
 }
