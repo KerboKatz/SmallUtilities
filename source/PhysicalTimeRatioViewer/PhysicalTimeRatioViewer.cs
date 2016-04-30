@@ -28,15 +28,15 @@ namespace KerboKatz.PTRV
     {
       modName = "PhysicalTimeRatioViewer";
       displayName = "Physical Time Ratio Viewer";
-      requiresUtilities = new Version(1, 3, 0);
+      requiresUtilities = new Version(1, 3, 3);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
     public override void OnAwake()
     {
       LoadSettings("SmallUtilities/PhysicalTimeRatioViewer", "Settings");
-      LoadUI("PhysicalTimeRatioViewer");
-      LoadUI("PhysicalTimeRatioViewerSettings");
+      LoadUI("PhysicalTimeRatioViewer", "SmallUtilities/PhysicalTimeRatioViewer/PhysicalTimeRatioViewer");
+      LoadUI("PhysicalTimeRatioViewerSettings", "SmallUtilities/PhysicalTimeRatioViewer/PhysicalTimeRatioViewer");
       GameEvents.onGamePause.Add(onPause);
       GameEvents.onGameUnpause.Add(onUnpause);
     }
@@ -63,7 +63,7 @@ namespace KerboKatz.PTRV
     {
       if (nextGametimeToRealtimeCheck + settings.refreshRate < Time.realtimeSinceStartup)
       {
-        nextGametimeToRealtimeCheck = Time.realtimeSinceStartup ;
+        nextGametimeToRealtimeCheck = Time.realtimeSinceStartup;
         var lastTime = thisTime;
         thisTime = Time.time;
         lastRealTime = ThisRealTime;
@@ -74,7 +74,8 @@ namespace KerboKatz.PTRV
       }
       if (maxDeltaTimeLabel != null && settings.showMaxDeltaTime)
         maxDeltaTimeLabel.text = Time.maximumDeltaTime.ToString();
-      labelsBackground.transform.SetAsLastSibling();
+      if (labelsBackground != null)
+        labelsBackground.transform.SetAsLastSibling();
     }
     #region ui
     protected override void OnUIElemntInit(UIData uiWindow)
@@ -177,7 +178,7 @@ namespace KerboKatz.PTRV
     {
       get
       {
-        return AssetLoader.GetAsset<Sprite>("PhysicalTimeRatioViewer", "Icons");//Utilities.GetTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures");
+        return AssetLoader.GetAsset<Sprite>("PhysicalTimeRatioViewer", "Icons", "SmallUtilities/PhysicalTimeRatioViewer/PhysicalTimeRatioViewer");//Utilities.GetTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures");
       }
     }
     #endregion

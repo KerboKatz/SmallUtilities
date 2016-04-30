@@ -2,40 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KerboKatz
+namespace KerboKatz.MEP
 {
   [KSPAddon(KSPAddon.Startup.Flight, false)]
-  public partial class ModifiedExplosionPotential : KerboKatzBase
+  public partial class ModifiedExplosionPotential : KerboKatzBase<Settings>
   {
-    private Dictionary<string, double> resourceExplosionModifiers = new Dictionary<string, double>();
-    private float baseExplosiveness;
     private float nextUpdate;
-    private float updateInterval;
     public ModifiedExplosionPotential()
     {
-      modName = "SmallUtilities.ModifiedExplosionPotential";
-      requiresUtilities = new Version(1, 2, 5);
+      modName = "ModifiedExplosionPotential";
+      displayName = "Modified Explosion Potential";
+      requiresUtilities = new Version(1, 3, 3);
+      Log("Init done!");
     }
-
-    protected override void Started()
+    public override void OnAwake()
     {
-      currentSettings.load("SmallUtilities", "ModifiedExplosionPotential", modName);
-      currentSettings.setDefault("baseExplosiveness", "0.1");
-      currentSettings.setDefault("updateInterval", "1.00");
-      baseExplosiveness = currentSettings.getFloat("baseExplosiveness");
-      updateInterval = currentSettings.getFloat("updateInterval");
+      LoadSettings("SmallUtilities/ModifiedExplosionPotential", "Settings");
 
       foreach (var resource in PartResourceLibrary.Instance.resourceDefinitions)
       {
-        if (currentSettings.isSet(resource.name))
+        if (!settings.IsExplosionValueSet(resource.name))
         {
-          resourceExplosionModifiers.Add(resource.name, currentSettings.getDouble(resource.name));
+          settings.AddExplosionValue(resource.name, resource.density);
           continue;
-        }
-        if (!resourceExplosionModifiers.ContainsKey(resource.name))
-        {
-          resourceExplosionModifiers.Add(resource.name, resource.density);
-          currentSettings.set(resource.name, resource.density);
         }
       }
       GameEvents.onVesselLoaded.Add(onVesselLoad);
@@ -47,7 +36,7 @@ namespace KerboKatz
       updateExplosionPotential(part);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
       if (nextUpdate < Time.time)
       {
@@ -64,7 +53,7 @@ namespace KerboKatz
             }
           }
         }
-        nextUpdate = Time.time + updateInterval;
+        nextUpdate = Time.time + settings.updateInterval;
       }
     }
 
@@ -78,18 +67,19 @@ namespace KerboKatz
 
     private void updateExplosionPotential(Part part)
     {
-      double explosiveness = baseExplosiveness;
+      double explosiveness = settings.baseExplosiveness;
+      float currentExplosiveness;
       foreach (var resource in part.Resources.list)
       {
-        if (resourceExplosionModifiers.ContainsKey(resource.resourceName))
+        if (settings.GetExplosiveness(resource.resourceName, out currentExplosiveness))
         {
-          explosiveness += resource.amount * resourceExplosionModifiers[resource.resourceName];
+          explosiveness += resource.amount * currentExplosiveness;
         }
       }
       part.explosionPotential = (float)explosiveness;
     }
 
-    protected override void afterDestroy()
+    protected override void AfterDestroy()
     {
       GameEvents.onPartUnpack.Remove(onPartUnpack);
       GameEvents.onVesselLoaded.Remove(onVesselLoad);

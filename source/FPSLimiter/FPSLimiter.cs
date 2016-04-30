@@ -16,7 +16,7 @@ namespace KerboKatz.FPSL
     private bool focusStatus = true;
     private bool isDirty = true;
     private List<GameScenes> _activeScences = new List<GameScenes>() { GameScenes.EDITOR, GameScenes.FLIGHT, GameScenes.MAINMENU, GameScenes.PSYSTEM, GameScenes.SPACECENTER, GameScenes.TRACKSTATION };
-    private Sprite _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons");//Utilities.GetTexture("FPSLimiter", "SmallUtilities/FPSLimiter/Textures");
+    private Sprite _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons", "SmallUtilities/FPSLimiter/FPSLimiter");//Utilities.GetTexture("FPSLimiter", "SmallUtilities/FPSLimiter/Textures");
     private int targetFrameRate;
     private Text currentFPSLabel;
     private string settingsUIName;
@@ -28,14 +28,14 @@ namespace KerboKatz.FPSL
       modName = "FPSLimiter";
       displayName = "FPS Limiter";
       settingsUIName = "FPSLimiter";
-      requiresUtilities = new Version(1, 3, 0);
+      requiresUtilities = new Version(1, 3, 3);
       ToolbarBase.instance.Add(this);
       LoadSettings("SmallUtilities/FPSLimiter", "Settings");
       Log("Init done!");
     }
     public override void OnAwake()
     {
-      LoadUI(settingsUIName);
+      LoadUI(settingsUIName, "SmallUtilities/FPSLimiter/FPSLimiter");
       GameEvents.onGameSceneLoadRequested.Add(onGameSceneLoadRequested);
       this.enabled = true;
       DontDestroyOnLoad(this);
@@ -45,10 +45,10 @@ namespace KerboKatz.FPSL
     {
       if (GameScene == GameScenes.MAINMENU)
       {
-        _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons");//Utilities.GetTexture("icon", "SmallUtilities/FPSLimiter/Textures");
+        _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons", "SmallUtilities/FPSLimiter/FPSLimiter");//Utilities.GetTexture("icon", "SmallUtilities/FPSLimiter/Textures");
       }
       //reload the ui on scene change
-      LoadUI(settingsUIName);
+      LoadUI(settingsUIName, "SmallUtilities/FPSLimiter/FPSLimiter");
     }
     protected override void AfterDestroy()
     {

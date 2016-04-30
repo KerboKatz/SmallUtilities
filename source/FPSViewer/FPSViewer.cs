@@ -25,15 +25,15 @@ namespace KerboKatz.FPSV
     {
       modName = "FPSViewer";
       displayName = "FPS Viewer";
-      requiresUtilities = new Version(1, 3, 0);
+      requiresUtilities = new Version(1, 3, 3);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
     public override void OnAwake()
     {
       LoadSettings("SmallUtilities/FPSViewer", "Settings");
-      LoadUI("FPSViewer");
-      LoadUI("FPSViewerSettings");
+      LoadUI("FPSViewer", "SmallUtilities/FPSViewer/FPSViewer");
+      LoadUI("FPSViewerSettings", "SmallUtilities/FPSViewer/FPSViewer");
     }
     protected override void AfterDestroy()
     {
@@ -163,7 +163,7 @@ namespace KerboKatz.FPSV
     {
       get
       {
-        return AssetLoader.GetAsset<Sprite>("FPSViewer", "Icons");//Utilities.GetTexture("icon", "SmallUtilities/FPSViewer/Textures");
+        return AssetLoader.GetAsset<Sprite>("FPSViewer", "Icons", "SmallUtilities/FPSViewer/FPSViewer");//Utilities.GetTexture("icon", "SmallUtilities/FPSViewer/Textures");
       }
     }
     #endregion
