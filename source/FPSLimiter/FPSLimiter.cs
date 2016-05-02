@@ -75,13 +75,13 @@ namespace KerboKatz.FPSL
     private void OnDebugChange(bool arg0)
     {
       settings.debug = arg0;
-      settings.Save();
+      SaveSettings();
       Log("OnDebugChange");
     }
     private void OnDisableMod(bool arg0)
     {
       settings.disable = arg0;
-      settings.Save();
+      SaveSettings();
       isDirty = true;
       Log("OnDisableMod");
     }
@@ -89,7 +89,7 @@ namespace KerboKatz.FPSL
     private void OnVSyncChange(bool arg0)
     {
       settings.useVSync = arg0;
-      settings.Save();
+      SaveSettings();
       isDirty = true;
       Log("OnVSyncChange");
     }
@@ -97,14 +97,14 @@ namespace KerboKatz.FPSL
     private void OnActiveFPSChange(string arg0)
     {
       settings.active = arg0.ToInt();
-      settings.Save();
+      SaveSettings();
       isDirty = true;
       Log("OnActiveFPSChange");
     }
     private void OnBackgroundFPSChange(string arg0)
     {
       settings.background = arg0.ToInt();
-      settings.Save();
+      SaveSettings();
       isDirty = true;
       Log("OnBackgroundFPSChange");
     }
@@ -214,7 +214,7 @@ namespace KerboKatz.FPSL
       {
         FadeCanvasGroup(uiData.canvasGroup, 0, settings.uiFadeSpeed);
       }
-      settings.Save();
+      SaveSettings();
     }
 
 

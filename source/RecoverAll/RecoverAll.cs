@@ -110,6 +110,7 @@ namespace KerboKatz.RA
 
     private void OnDeselectAll()
     {
+      Log("OnDeselectAll");
       foreach (var data in vessels)
       {
         data.Value.toggle.isOn =
@@ -119,6 +120,7 @@ namespace KerboKatz.RA
 
     private void OnSelectAll()
     {
+      Log("OnSelectAll");
       foreach (var data in vessels)
       {
         data.Value.toggle.isOn =
@@ -128,6 +130,7 @@ namespace KerboKatz.RA
 
     private void OnRecoverAll()
     {
+      Log("OnRecoverAll");
       var recoveredSomething = false;
       var removed = new List<Vessel>();
       foreach (var vesselData in vessels)
@@ -149,7 +152,7 @@ namespace KerboKatz.RA
 
       if (recoveredSomething)
       {
-        foreach(var vessel in removed)
+        foreach (var vessel in removed)
         {
           vessels.Remove(vessel);
         }

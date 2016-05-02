@@ -89,21 +89,21 @@ namespace KerboKatz.FPSV
     {
       settings.moveLabelPosition = arg0;
       FadeGraphic(labelsBackground, settings.moveLabelPosition);
-      settings.Save();
+      SaveSettings();
     }
 
     private void OnShowMinFPSChange(bool arg0)
     {
       settings.showMinFPS = arg0;
       UpdateMinMaxLabels();
-      settings.Save();
+      SaveSettings();
     }
 
     private void OnShowMaxFPSChange(bool arg0)
     {
       settings.showMaxFPS = arg0;
       UpdateMinMaxLabels();
-      settings.Save();
+      SaveSettings();
     }
     private void UpdateMinMaxLabels()
     {

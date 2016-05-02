@@ -144,7 +144,7 @@ namespace KerboKatz.DA
         removed.Add(vessel);
       }
 
-      if (removed.Count>0)
+      if (removed.Count > 0)
       {
         foreach (var vessel in removed)
         {

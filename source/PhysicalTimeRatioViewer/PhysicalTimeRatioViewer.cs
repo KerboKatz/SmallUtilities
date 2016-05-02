@@ -111,20 +111,20 @@ namespace KerboKatz.PTRV
     private void OnRefreshRateChange(float arg0)
     {
       settings.refreshRate = arg0;
-      settings.Save();
+      SaveSettings();
     }
 
     private void onShowMaxDeltaTimeChange(bool arg0)
     {
       settings.showMaxDeltaTime = arg0;
       FadeGraphic(maxDeltaTimeLabel, settings.showMaxDeltaTime);
-      settings.Save();
+      SaveSettings();
     }
     private void OnMovePositionChange(bool arg0)
     {
       settings.moveLabelPosition = arg0;
       FadeGraphic(labelsBackground, settings.moveLabelPosition);
-      settings.Save();
+      SaveSettings();
     }
     #endregion
     #region toolbar
