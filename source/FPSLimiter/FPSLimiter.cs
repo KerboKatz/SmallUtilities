@@ -1,7 +1,6 @@
 ﻿using KerboKatz.Assets;
 using KerboKatz.Extensions;
 using KerboKatz.Toolbar;
-using KSP.UI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,17 +21,20 @@ namespace KerboKatz.FPSL
     private string settingsUIName;
 
     //private int targetFrameRate;
+
     #region init/destroy
+
     public FPSLimiter()
     {
       modName = "FPSLimiter";
       displayName = "FPS Limiter";
       settingsUIName = "FPSLimiter";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       ToolbarBase.instance.Add(this);
       LoadSettings("SmallUtilities/FPSLimiter", "Settings");
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       LoadUI(settingsUIName, "SmallUtilities/FPSLimiter/FPSLimiter");
@@ -41,6 +43,7 @@ namespace KerboKatz.FPSL
       DontDestroyOnLoad(this);
       Log("Awake");
     }
+
     public void onGameSceneLoadRequested(GameScenes GameScene)
     {
       if (GameScene == GameScenes.MAINMENU)
@@ -50,6 +53,7 @@ namespace KerboKatz.FPSL
       //reload the ui on scene change
       LoadUI(settingsUIName, "SmallUtilities/FPSLimiter/FPSLimiter");
     }
+
     protected override void AfterDestroy()
     {
       GameEvents.onGameSceneLoadRequested.Remove(onGameSceneLoadRequested);
@@ -57,8 +61,10 @@ namespace KerboKatz.FPSL
       Log("AfterDestroy");
     }
 
-    #endregion
+    #endregion init/destroy
+
     #region ui
+
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       var prefabWindow = uiWindow.gameObject.transform as RectTransform;
@@ -69,7 +75,6 @@ namespace KerboKatz.FPSL
       InitToggle(content, "VSync", settings.useVSync, OnVSyncChange);
       InitToggle(content, "DisableMod", settings.disable, OnDisableMod);
       InitToggle(content, "Debug", settings.debug, OnDebugChange);
-      
     }
 
     private void OnDebugChange(bool arg0)
@@ -78,6 +83,7 @@ namespace KerboKatz.FPSL
       SaveSettings();
       Log("OnDebugChange");
     }
+
     private void OnDisableMod(bool arg0)
     {
       settings.disable = arg0;
@@ -101,6 +107,7 @@ namespace KerboKatz.FPSL
       isDirty = true;
       Log("OnActiveFPSChange");
     }
+
     private void OnBackgroundFPSChange(string arg0)
     {
       settings.background = arg0.ToInt();
@@ -108,7 +115,8 @@ namespace KerboKatz.FPSL
       isDirty = true;
       Log("OnBackgroundFPSChange");
     }
-    #endregion
+
+    #endregion ui
 
     public void Update()
     {
@@ -183,7 +191,7 @@ namespace KerboKatz.FPSL
     }
 
     #region IToolbar
-    
+
     public List<GameScenes> activeScences
     {
       get
@@ -217,7 +225,6 @@ namespace KerboKatz.FPSL
       SaveSettings();
     }
 
-
     public Sprite icon
     {
       get
@@ -234,6 +241,6 @@ namespace KerboKatz.FPSL
       }
     }
 
-    #endregion
+    #endregion IToolbar
   }
 }

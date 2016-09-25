@@ -1,8 +1,4 @@
-﻿using KerboKatz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace KerboKatz.RA
 {
@@ -22,9 +18,9 @@ namespace KerboKatz.RA
 
     public VesselToggle GetType(VesselType type)
     {
-      foreach(var vesselToggle in vesselTypeToggles)
+      foreach (var vesselToggle in vesselTypeToggles)
       {
-        if(vesselToggle.type == type)
+        if (vesselToggle.type == type)
         {
           return vesselToggle;
         }

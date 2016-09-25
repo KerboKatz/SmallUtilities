@@ -26,6 +26,7 @@ namespace KerboKatz.DA
         this.destroy = destroy;
       }
     }
+
     private List<GameScenes> _activeScences = new List<GameScenes>() { GameScenes.TRACKSTATION };
     private Transform vesselContainer;
     private UIData settingsWindow;
@@ -34,13 +35,15 @@ namespace KerboKatz.DA
     private Dictionary<Vessel, VesselData> vessels = new Dictionary<Vessel, VesselData>();
 
     #region init
+
     public DestroyAll()
     {
       modName = "DestroyAll";
       displayName = "Destroy All";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       ToolbarBase.instance.Add(this);
@@ -48,14 +51,16 @@ namespace KerboKatz.DA
       LoadUI("DestroyAllSettings", "SmallUtilities/DestroyAll/DestroyAll");
       LoadUI("DestroyAll", "SmallUtilities/DestroyAll/DestroyAll");
     }
+
     protected override void AfterDestroy()
     {
       ToolbarBase.instance.Remove(this);
     }
-    #endregion
 
+    #endregion init
 
     #region ui
+
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       var prefabWindow = uiWindow.gameObject.transform as RectTransform;
@@ -94,6 +99,7 @@ namespace KerboKatz.DA
             });
           }
           break;
+
         case "DestroyAll":
           vesselWindow = uiWindow;
           var scrollView = content.FindChild("Scroll View");
@@ -181,7 +187,7 @@ namespace KerboKatz.DA
               tooltipString.AppendLine();
             tooltipString.Append(crewMember.name);
           }
-          tooltip.text = tooltipString.ToString();
+          tooltip._text = tooltipString.ToString();
         }
         VesselData data;
         if (!vessels.TryGetValue(vessel, out data))
@@ -199,6 +205,7 @@ namespace KerboKatz.DA
       }
       vesselContainer.SortChildrenByName();
     }
+
     private bool CanVesselBeDestroyed(Vessel vessel)
     {
       //to do for the future:
@@ -209,8 +216,11 @@ namespace KerboKatz.DA
         return false;
       return true;
     }
-    #endregion
+
+    #endregion ui
+
     #region toolbar
+
     public List<GameScenes> activeScences
     {
       get
@@ -262,6 +272,7 @@ namespace KerboKatz.DA
         return AssetLoader.GetAsset<Sprite>("DestroyAll", "Icons", "SmallUtilities/DestroyAll/DestroyAll");
       }
     }
-    #endregion
+
+    #endregion toolbar
   }
 }

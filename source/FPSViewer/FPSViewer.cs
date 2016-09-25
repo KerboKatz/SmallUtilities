@@ -1,12 +1,10 @@
-﻿using KerboKatz.Toolbar;
+﻿using KerboKatz.Assets;
+using KerboKatz.Toolbar;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using KSP.UI;
-using System.Text;
-using KerboKatz.Assets;
 
 namespace KerboKatz.FPSV
 {
@@ -25,22 +23,25 @@ namespace KerboKatz.FPSV
     {
       modName = "FPSViewer";
       displayName = "FPS Viewer";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       LoadSettings("SmallUtilities/FPSViewer", "Settings");
       LoadUI("FPSViewer", "SmallUtilities/FPSViewer/FPSViewer");
       LoadUI("FPSViewerSettings", "SmallUtilities/FPSViewer/FPSViewer");
     }
+
     protected override void AfterDestroy()
     {
       ToolbarBase.instance.Remove(this);
       Log("AfterDestroy");
     }
-    void Update()
+
+    private void Update()
     {
       if (!settings.showLabels || labels == null || maxLabel == null || currentLabel == null || minLabel == null)
         return;
@@ -54,7 +55,9 @@ namespace KerboKatz.FPSV
 
       labelsBackground.transform.SetAsLastSibling();
     }
+
     #region ui
+
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       switch (uiWindow.name)
@@ -69,6 +72,7 @@ namespace KerboKatz.FPSV
           FadeGraphic(labelsBackground, settings.moveLabelPosition);
           UpdateMinMaxLabels();
           break;
+
         case "FPSViewerSettings":
           settingsWindow = uiWindow;
           var content = settingsWindow.gameObject.transform.FindChild("Content");
@@ -105,13 +109,17 @@ namespace KerboKatz.FPSV
       UpdateMinMaxLabels();
       SaveSettings();
     }
+
     private void UpdateMinMaxLabels()
     {
       FadeGraphic(maxLabel, settings.showMaxFPS);
       FadeGraphic(minLabel, settings.showMinFPS);
     }
-    #endregion
+
+    #endregion ui
+
     #region toolbar
+
     public List<GameScenes> activeScences
     {
       get
@@ -166,6 +174,7 @@ namespace KerboKatz.FPSV
         return AssetLoader.GetAsset<Sprite>("FPSViewer", "Icons", "SmallUtilities/FPSViewer/FPSViewer");//Utilities.GetTexture("icon", "SmallUtilities/FPSViewer/Textures");
       }
     }
-    #endregion
+
+    #endregion toolbar
   }
 }

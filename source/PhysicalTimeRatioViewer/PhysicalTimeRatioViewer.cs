@@ -1,5 +1,4 @@
-﻿using KerboKatz;
-using KerboKatz.Assets;
+﻿using KerboKatz.Assets;
 using KerboKatz.Toolbar;
 using System;
 using System.Collections.Generic;
@@ -28,10 +27,11 @@ namespace KerboKatz.PTRV
     {
       modName = "PhysicalTimeRatioViewer";
       displayName = "Physical Time Ratio Viewer";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       LoadSettings("SmallUtilities/PhysicalTimeRatioViewer", "Settings");
@@ -40,6 +40,7 @@ namespace KerboKatz.PTRV
       GameEvents.onGamePause.Add(onPause);
       GameEvents.onGameUnpause.Add(onUnpause);
     }
+
     protected override void AfterDestroy()
     {
       GameEvents.onGamePause.Remove(onPause);
@@ -47,6 +48,7 @@ namespace KerboKatz.PTRV
       ToolbarBase.instance.Remove(this);
       Log("AfterDestroy");
     }
+
     private void onUnpause()
     {
       //nextGametimeToRealtimeCheck = Time.realtimeSinceStartup;
@@ -59,7 +61,7 @@ namespace KerboKatz.PTRV
       gameTimeToRealtime = 0;
     }
 
-    void Update()
+    private void Update()
     {
       if (nextGametimeToRealtimeCheck + settings.refreshRate < Time.realtimeSinceStartup)
       {
@@ -77,7 +79,9 @@ namespace KerboKatz.PTRV
       if (labelsBackground != null)
         labelsBackground.transform.SetAsLastSibling();
     }
+
     #region ui
+
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       switch (uiWindow.name)
@@ -92,6 +96,7 @@ namespace KerboKatz.PTRV
           FadeGraphic(labelsBackground, settings.moveLabelPosition);
 
           break;
+
         case "PhysicalTimeRatioViewerSettings":
           settingsWindow = uiWindow;
           var content = settingsWindow.gameObject.transform.FindChild("Content");
@@ -99,6 +104,7 @@ namespace KerboKatz.PTRV
           InitToggle(content, "MovePosition", settings.moveLabelPosition, OnMovePositionChange);
           InitSlider(content, "RefreshRate", settings.refreshRate, OnRefreshRateChange);
           InitSlider(content, "MaxDeltaTime", Time.maximumDeltaTime, OnMaxDeltaTimeChange);
+          InitSlider(content, "Debug", Time.maximumDeltaTime, OnMaxDeltaTimeChange);
           break;
       }
     }
@@ -120,14 +126,18 @@ namespace KerboKatz.PTRV
       FadeGraphic(maxDeltaTimeLabel, settings.showMaxDeltaTime);
       SaveSettings();
     }
+
     private void OnMovePositionChange(bool arg0)
     {
       settings.moveLabelPosition = arg0;
       FadeGraphic(labelsBackground, settings.moveLabelPosition);
       SaveSettings();
     }
-    #endregion
+
+    #endregion ui
+
     #region toolbar
+
     public List<GameScenes> activeScences
     {
       get
@@ -181,6 +191,7 @@ namespace KerboKatz.PTRV
         return AssetLoader.GetAsset<Sprite>("PhysicalTimeRatioViewer", "Icons", "SmallUtilities/PhysicalTimeRatioViewer/PhysicalTimeRatioViewer");//Utilities.GetTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures");
       }
     }
-    #endregion
+
+    #endregion toolbar
   }
 }

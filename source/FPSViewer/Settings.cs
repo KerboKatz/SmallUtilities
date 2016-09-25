@@ -1,11 +1,4 @@
-﻿using KerboKatz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
-namespace KerboKatz.FPSV
+﻿namespace KerboKatz.FPSV
 {
   public class Settings : SettingsBase<Settings>
   {

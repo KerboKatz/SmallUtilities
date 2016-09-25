@@ -1,8 +1,4 @@
-﻿using KerboKatz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace KerboKatz.MEP
 {
@@ -28,6 +24,7 @@ namespace KerboKatz.MEP
         _explosionValues.Add(setting.name, setting);
       }
     }
+
     protected override void OnSave()
     {
       explosionValues = new List<ExplosionValue>(_explosionValues.Values);
@@ -45,6 +42,7 @@ namespace KerboKatz.MEP
       value.explosiveness = density;
       _explosionValues.Add(name, value);
     }
+
     internal bool GetExplosiveness(string name, out float explosiveness)
     {
       explosiveness = 0;

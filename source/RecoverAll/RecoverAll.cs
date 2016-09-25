@@ -26,6 +26,7 @@ namespace KerboKatz.RA
         this.recover = recover;
       }
     }
+
     private List<GameScenes> _activeScences = new List<GameScenes>() { GameScenes.TRACKSTATION };
     private Transform vesselContainer;
     private UIData settingsWindow;
@@ -37,9 +38,10 @@ namespace KerboKatz.RA
     {
       modName = "RecoverAll";
       displayName = "Recover All";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       ToolbarBase.instance.Add(this);
@@ -47,10 +49,12 @@ namespace KerboKatz.RA
       LoadUI("RecoverAllSettings", "SmallUtilities/RecoverAll/RecoverAll");
       LoadUI("RecoverAll", "SmallUtilities/RecoverAll/RecoverAll");
     }
+
     protected override void AfterDestroy()
     {
       ToolbarBase.instance.Remove(this);
     }
+
     #region ui
 
     protected override void OnUIElemntInit(UIData uiWindow)
@@ -91,6 +95,7 @@ namespace KerboKatz.RA
              });
           }
           break;
+
         case "RecoverAll":
           vesselWindow = uiWindow;
           var scrollView = content.FindChild("Scroll View");
@@ -187,7 +192,7 @@ namespace KerboKatz.RA
               tooltipString.AppendLine();
             tooltipString.Append(crewMember.name);
           }
-          tooltip.text = tooltipString.ToString();
+          tooltip._text = tooltipString.ToString();
         }
         VesselData data;
         if (!vessels.TryGetValue(vessel, out data))
@@ -205,6 +210,7 @@ namespace KerboKatz.RA
       }
       vesselContainer.SortChildrenByName();
     }
+
     private bool CanVesselBeRecovered(Vessel vessel)
     {
       if (!vessel.IsRecoverable)
@@ -215,8 +221,11 @@ namespace KerboKatz.RA
         return false;
       return true;
     }
-    #endregion
+
+    #endregion ui
+
     #region toolbar
+
     public List<GameScenes> activeScences
     {
       get
@@ -268,6 +277,7 @@ namespace KerboKatz.RA
         return AssetLoader.GetAsset<Sprite>("RecoverAll", "Icons", "SmallUtilities/RecoverAll/RecoverAll");
       }
     }
-    #endregion
+
+    #endregion toolbar
   }
 }

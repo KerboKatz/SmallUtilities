@@ -8,13 +8,15 @@ namespace KerboKatz.MEP
   public partial class ModifiedExplosionPotential : KerboKatzBase<Settings>
   {
     private float nextUpdate;
+
     public ModifiedExplosionPotential()
     {
       modName = "ModifiedExplosionPotential";
       displayName = "Modified Explosion Potential";
-      requiresUtilities = new Version(1, 3, 3);
+      requiresUtilities = new Version(1, 4, 0);
       Log("Init done!");
     }
+
     public override void OnAwake()
     {
       LoadSettings("SmallUtilities/ModifiedExplosionPotential", "Settings");
@@ -69,7 +71,7 @@ namespace KerboKatz.MEP
     {
       double explosiveness = settings.baseExplosiveness;
       float currentExplosiveness;
-      foreach (var resource in part.Resources.list)
+      foreach (var resource in part.Resources)
       {
         if (settings.GetExplosiveness(resource.resourceName, out currentExplosiveness))
         {
