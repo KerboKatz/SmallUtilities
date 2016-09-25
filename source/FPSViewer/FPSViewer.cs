@@ -18,6 +18,7 @@ namespace KerboKatz.FPSV
     private UIData labels;
     private Image labelsBackground;
     private UIData settingsWindow;
+    private static FPSViewer instance;
 
     public FPSViewer()
     {
@@ -30,6 +31,13 @@ namespace KerboKatz.FPSV
 
     public override void OnAwake()
     {
+      if(instance != null)
+      {
+        Log("Instance of ", modName, " exists already. Possible bug ?");
+        Destroy(this);
+        return;
+      }
+      instance = this;
       LoadSettings("SmallUtilities/FPSViewer", "Settings");
       LoadUI("FPSViewer", "SmallUtilities/FPSViewer/FPSViewer");
       LoadUI("FPSViewerSettings", "SmallUtilities/FPSViewer/FPSViewer");
