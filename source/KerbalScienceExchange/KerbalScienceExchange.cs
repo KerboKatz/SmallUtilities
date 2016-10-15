@@ -20,6 +20,8 @@ namespace KerboKatz.KSX
     private Button sellButton;
     private Tooltip buyTooltip;
     private Tooltip sellTooltip;
+    private float value;
+    private InputField scienceField;
 
     public KerbalScienceExchange()
     {
@@ -55,7 +57,8 @@ namespace KerboKatz.KSX
           var content = exchangeWindow.gameObject.transform.FindChild("Content");
           var buttons = content.FindChild("ExchangeButtons");
           //InitInputField(exchangeWindow.)
-          InitInputField(content, "ScienceField", "0").onValueChange.AddListener(OnInputChange);
+          scienceField = InitInputField(content, "ScienceField", "0");
+          scienceField.onValueChanged.AddListener(OnInputChange);
           InitTextField(content.FindChild("ConversionLabel"), "Label", settings.ratio.ToString());
           InitTextField(content.FindChild("TaxFeeLabel"), "Label", settings.tax.ToString());
           buyButton = InitButton(buttons, "MoneyToScience", OnBuyScience);
@@ -68,17 +71,35 @@ namespace KerboKatz.KSX
 
     private void OnSellScience()
     {
-      throw new NotImplementedException();
+      if (value == 0)
+        return;
+      if (ResearchAndDevelopment.CanAfford(value))
+      {
+        var funds = GetBuyValue(value);
+        Funding.Instance.AddFunds(funds, TransactionReasons.None);
+        ResearchAndDevelopment.Instance.AddScience(-value, TransactionReasons.None);
+      }
+      ScreenMessages.PostScreenMessage("Transaction complete. Pleasure doing business with you!");
+      scienceField.text = "0";
     }
 
     private void OnBuyScience()
     {
-      throw new NotImplementedException();
+      if (value == 0)
+        return;
+      var funds = GetBuyValue(value);
+      if (Funding.CanAfford(funds))
+      {
+        Funding.Instance.AddFunds(-funds, TransactionReasons.None);
+        ResearchAndDevelopment.Instance.AddScience(value, TransactionReasons.None);
+      }
+      ScreenMessages.PostScreenMessage("Transaction complete. Pleasure doing business with you!");
+      scienceField.text = "0";
     }
 
     private void OnInputChange(string arg0)
     {
-      var value = arg0.ToFloat();
+      value = Math.Max(arg0.ToFloat(), 0);
       if (value == 0)
       {
         buyTooltip._text = "";
