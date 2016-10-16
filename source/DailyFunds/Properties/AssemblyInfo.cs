@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SmallUtilities.KerbalScienceExchange")]
+[assembly: AssemblyTitle("SmallUtilities.DailyFunds")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("KerboKatz")]
-[assembly: AssemblyProduct("SmallUtilities.KerbalScienceExchange")]
+[assembly: AssemblyProduct("SmallUtilities.DailyFunds")]
 [assembly: AssemblyCopyright("Copyright © KerboKatz 2016")]
 [assembly: AssemblyTrademark("KerboKatz")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dcc74d13-4821-4bfd-987c-ae2f0a5c7894")]
+[assembly: Guid("21080066-78ae-4b96-9a25-190109098ed4")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -134,7 +134,7 @@ namespace KerboKatz.KSX
 
     private float GetModifier()
     {
-      float repScale = ((Mathf.Min(Reputation.UnitRep, settings.repHigh) - settings.repHigh) / (settings.repLow - settings.repHigh));
+      float repScale = ((Mathf.Min(Reputation.CurrentRep, settings.repHigh) - settings.repHigh) / (settings.repLow - settings.repHigh));
       return (1 + (repScale * settings.repDelta + settings.tax) / 100);
     }
 
