@@ -27,7 +27,7 @@ namespace KerboKatz.KSX
     {
       modName = "KerbalScienceExchange";
       displayName = "Kerbal Science Exchange";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
@@ -174,6 +174,14 @@ namespace KerboKatz.KSX
       get
       {
         return AssetLoader.GetAsset<Sprite>("KerbalScienceExchange", "Icons", "SmallUtilities/KerbalScienceExchange/KerbalScienceExchange");
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 

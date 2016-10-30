@@ -29,7 +29,7 @@ namespace KerboKatz.FPSL
       modName = "FPSLimiter";
       displayName = "FPS Limiter";
       settingsUIName = "FPSLimiter";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       ToolbarBase.instance.Add(this);
       LoadSettings("SmallUtilities/FPSLimiter", "Settings");
       Log("Init done!");
@@ -126,24 +126,24 @@ namespace KerboKatz.FPSL
       {
         if (HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
         {
-          Application.targetFrameRate = -1;
-          QualitySettings.vSyncCount = 0;
+          SetTargetFrameRate(-1);
+          SetVSync(0);
         }
         return;
       }
-      Application.targetFrameRate = 60;
-      QualitySettings.vSyncCount = 1;
       if (settings.disable)//currentSettings.getBool("disableMod"))
       {
         targetFrameRate = GameSettings.FRAMERATE_LIMIT;
-        QualitySettings.vSyncCount = GameSettings.SYNC_VBL;
-        Application.runInBackground = true;
+        SetVSync(GameSettings.SYNC_VBL);
+        if (!Application.runInBackground)
+          Application.runInBackground = true;
       }
       else
       {
         if (focusStatus)
         {
-          Application.runInBackground = true;
+          if (!Application.runInBackground)
+            Application.runInBackground = true;
           targetFrameRate = settings.active;
         }
         else
@@ -155,7 +155,8 @@ namespace KerboKatz.FPSL
           }
           else
           {
-            Application.runInBackground = false;
+            if (Application.runInBackground)
+              Application.runInBackground = false;
           }
         }
         if (settings.useVSync)
@@ -163,25 +164,36 @@ namespace KerboKatz.FPSL
           switch (targetFrameRate)
           {
             case 30:
-              QualitySettings.vSyncCount = 2;
+              SetVSync(2);
               break;
 
             case 60:
-              QualitySettings.vSyncCount = 1;
+              SetVSync(1);
               break;
 
             default:
-              QualitySettings.vSyncCount = 0;
+              SetVSync(0);
               break;
           }
         }
         else
         {
-          QualitySettings.vSyncCount = 0;
+          SetVSync(0);
         }
       }
-      Application.targetFrameRate = targetFrameRate;
+      SetTargetFrameRate(targetFrameRate);
       isDirty = false;
+    }
+
+    private void SetTargetFrameRate(int value)
+    {
+      if (Application.targetFrameRate != value)
+        Application.targetFrameRate = value;
+    }
+    private static void SetVSync(int value)
+    {
+      if (QualitySettings.vSyncCount != value)
+        QualitySettings.vSyncCount = value;
     }
 
     private void OnApplicationFocus(bool focusStatus)
@@ -238,6 +250,14 @@ namespace KerboKatz.FPSL
           _icon = value;
           ToolbarBase.UpdateIcon();
         }
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 

@@ -7,6 +7,6 @@
     public float repLow = 0;
     internal bool showExchange;
     public float tax = 1;
-    public float ratio = 1000;
+    public float ratio = 10000;
   }
 }

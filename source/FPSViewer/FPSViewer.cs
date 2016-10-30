@@ -24,7 +24,7 @@ namespace KerboKatz.FPSV
     {
       modName = "FPSViewer";
       displayName = "FPS Viewer";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
@@ -180,6 +180,14 @@ namespace KerboKatz.FPSV
       get
       {
         return AssetLoader.GetAsset<Sprite>("FPSViewer", "Icons", "SmallUtilities/FPSViewer/FPSViewer");//Utilities.GetTexture("icon", "SmallUtilities/FPSViewer/Textures");
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 

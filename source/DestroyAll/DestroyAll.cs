@@ -40,7 +40,7 @@ namespace KerboKatz.DA
     {
       modName = "DestroyAll";
       displayName = "Destroy All";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       Log("Init done!");
     }
 
@@ -270,6 +270,14 @@ namespace KerboKatz.DA
       get
       {
         return AssetLoader.GetAsset<Sprite>("DestroyAll", "Icons", "SmallUtilities/DestroyAll/DestroyAll");
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 

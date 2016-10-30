@@ -27,7 +27,7 @@ namespace KerboKatz.PTRV
     {
       modName = "PhysicalTimeRatioViewer";
       displayName = "Physical Time Ratio Viewer";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
@@ -189,6 +189,14 @@ namespace KerboKatz.PTRV
       get
       {
         return AssetLoader.GetAsset<Sprite>("PhysicalTimeRatioViewer", "Icons", "SmallUtilities/PhysicalTimeRatioViewer/PhysicalTimeRatioViewer");//Utilities.GetTexture("icon", "SmallUtilities/PhysicalTimeRatioViewer/Textures");
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 

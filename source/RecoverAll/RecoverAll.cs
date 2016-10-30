@@ -38,7 +38,7 @@ namespace KerboKatz.RA
     {
       modName = "RecoverAll";
       displayName = "Recover All";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 4, 6);
       Log("Init done!");
     }
 
@@ -275,6 +275,14 @@ namespace KerboKatz.RA
       get
       {
         return AssetLoader.GetAsset<Sprite>("RecoverAll", "Icons", "SmallUtilities/RecoverAll/RecoverAll");
+      }
+    }
+
+    public bool useKKToolbar
+    {
+      get
+      {
+        return true;
       }
     }
 
