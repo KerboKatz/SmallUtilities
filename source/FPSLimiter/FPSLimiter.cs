@@ -39,13 +39,14 @@ namespace KerboKatz.FPSL
     {
       LoadUI(settingsUIName, "SmallUtilities/FPSLimiter/FPSLimiter");
       GameEvents.onGameSceneLoadRequested.Add(onGameSceneLoadRequested);
-      this.enabled = true;
+      //this.enabled = false;
       DontDestroyOnLoad(this);
       Log("Awake");
     }
 
     public void onGameSceneLoadRequested(GameScenes GameScene)
     {
+      SetVSync(0);
       if (GameScene == GameScenes.MAINMENU)
       {
         _icon = AssetLoader.GetAsset<Sprite>("FPSLimiter", "Icons", "SmallUtilities/FPSLimiter/FPSLimiter");//Utilities.GetTexture("icon", "SmallUtilities/FPSLimiter/Textures");
@@ -72,7 +73,7 @@ namespace KerboKatz.FPSL
       currentFPSLabel = InitTextField(content.FindChild("CurrentFPS"), "Label", "");
       InitInputField(content, "ActiveFPS", settings.active.ToString(), OnActiveFPSChange);
       InitInputField(content, "BackgroundFPS", settings.background.ToString(), OnBackgroundFPSChange);
-      InitToggle(content, "VSync", settings.useVSync, OnVSyncChange);
+      InitToggle(content, "VSync", settings.useVSync, OnVSyncChange).transform.parent.gameObject.SetActive(false);//in 1.2.2 changing the vsync option causes the main menu not to show up!
       InitToggle(content, "DisableMod", settings.disable, OnDisableMod);
       InitToggle(content, "Debug", settings.debug, OnDebugChange);
     }
@@ -127,14 +128,14 @@ namespace KerboKatz.FPSL
         if (HighLogic.LoadedScene == GameScenes.LOADING || HighLogic.LoadedScene == GameScenes.LOADINGBUFFER)
         {
           SetTargetFrameRate(-1);
-          SetVSync(0);
+          //SetVSync(0);
         }
         return;
       }
       if (settings.disable)//currentSettings.getBool("disableMod"))
       {
         targetFrameRate = GameSettings.FRAMERATE_LIMIT;
-        SetVSync(GameSettings.SYNC_VBL);
+        //SetVSync(GameSettings.SYNC_VBL);
         if (!Application.runInBackground)
           Application.runInBackground = true;
       }
@@ -159,7 +160,7 @@ namespace KerboKatz.FPSL
               Application.runInBackground = false;
           }
         }
-        if (settings.useVSync)
+        /*if (settings.useVSync)
         {
           switch (targetFrameRate)
           {
@@ -179,7 +180,7 @@ namespace KerboKatz.FPSL
         else
         {
           SetVSync(0);
-        }
+        }*/
       }
       SetTargetFrameRate(targetFrameRate);
       isDirty = false;

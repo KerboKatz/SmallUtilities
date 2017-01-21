@@ -49,7 +49,6 @@ namespace KerboKatz.KSX
 
     protected override void OnUIElemntInit(UIData uiWindow)
     {
-      Debug.LogError(uiWindow.name);
       switch (uiWindow.name)
       {
         case "KerbalScienceExchange":
