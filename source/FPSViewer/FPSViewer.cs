@@ -24,7 +24,7 @@ namespace KerboKatz.FPSV
     {
       modName = "FPSViewer";
       displayName = "FPS Viewer";
-      requiresUtilities = new Version(1, 4, 6);
+      requiresUtilities = new Version(1, 5, 2);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
@@ -83,7 +83,7 @@ namespace KerboKatz.FPSV
 
         case "FPSViewerSettings":
           settingsWindow = uiWindow;
-          var content = settingsWindow.gameObject.transform.FindChild("Content");
+          var content = settingsWindow.gameObject.transform.Find("Content");
           InitToggle(content, "ShowMax", settings.showMaxFPS, OnShowMaxFPSChange);
           InitToggle(content, "ShowMin", settings.showMinFPS, OnShowMinFPSChange);
           InitToggle(content, "MovePosition", settings.moveLabelPosition, OnMovePositionChange);

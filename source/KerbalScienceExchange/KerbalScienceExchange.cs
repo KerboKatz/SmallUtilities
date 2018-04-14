@@ -27,7 +27,7 @@ namespace KerboKatz.KSX
     {
       modName = "KerbalScienceExchange";
       displayName = "Kerbal Science Exchange";
-      requiresUtilities = new Version(1, 4, 6);
+      requiresUtilities = new Version(1, 5, 2);
       ToolbarBase.instance.Add(this);
       Log("Init done!");
     }
@@ -53,13 +53,13 @@ namespace KerboKatz.KSX
       {
         case "KerbalScienceExchange":
           exchangeWindow = uiWindow;
-          var content = exchangeWindow.gameObject.transform.FindChild("Content");
-          var buttons = content.FindChild("ExchangeButtons");
+          var content = exchangeWindow.gameObject.transform.Find("Content");
+          var buttons = content.Find("ExchangeButtons");
           //InitInputField(exchangeWindow.)
           scienceField = InitInputField(content, "ScienceField", "0");
           scienceField.onValueChanged.AddListener(OnInputChange);
-          InitTextField(content.FindChild("ConversionLabel"), "Label", settings.ratio.ToString());
-          InitTextField(content.FindChild("TaxFeeLabel"), "Label", settings.tax.ToString());
+          InitTextField(content.Find("ConversionLabel"), "Label", settings.ratio.ToString());
+          InitTextField(content.Find("TaxFeeLabel"), "Label", settings.tax.ToString());
           buyButton = InitButton(buttons, "MoneyToScience", OnBuyScience);
           sellButton = InitButton(buttons, "ScienceToMoney", OnSellScience);
           buyTooltip = buyButton.GetComponent<Tooltip>();

@@ -23,7 +23,7 @@ namespace KerboKatz.DF
     {
       modName = "DailyFunds";
       displayName = "Daily Funds";
-      requiresUtilities = new Version(1, 4, 6);
+      requiresUtilities = new Version(1, 5, 2);
       LoadSettings("SmallUtilities/DailyFunds", "Settings");
       Log("Init done!");
       instance = this;

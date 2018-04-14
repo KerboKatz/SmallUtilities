@@ -38,7 +38,7 @@ namespace KerboKatz.RA
     {
       modName = "RecoverAll";
       displayName = "Recover All";
-      requiresUtilities = new Version(1, 4, 6);
+      requiresUtilities = new Version(1, 5, 2);
       Log("Init done!");
     }
 
@@ -60,12 +60,12 @@ namespace KerboKatz.RA
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       var prefabWindow = uiWindow.gameObject.transform as RectTransform;
-      var content = prefabWindow.FindChild("Content");
+      var content = prefabWindow.Find("Content");
       switch (uiWindow.name)
       {
         case "RecoverAllSettings":
           settingsWindow = uiWindow;
-          var typeTemplate = content.FindChild("Template");
+          var typeTemplate = content.Find("Template");
           typeTemplate.SetParent(prefabWindow);
           typeTemplate.gameObject.SetActive(false);
           InitToggle(content, "IncludePrelaunch", settings.includePrelaunch, (arg0) =>
@@ -98,13 +98,13 @@ namespace KerboKatz.RA
 
         case "RecoverAll":
           vesselWindow = uiWindow;
-          var scrollView = content.FindChild("Scroll View");
-          var viewport = scrollView.FindChild("Viewport");
-          vesselContainer = viewport.FindChild("VesselContainer");
-          activeVesselsTemplate = vesselContainer.FindChild("Template");
+          var scrollView = content.Find("Scroll View");
+          var viewport = scrollView.Find("Viewport");
+          vesselContainer = viewport.Find("VesselContainer");
+          activeVesselsTemplate = vesselContainer.Find("Template");
           activeVesselsTemplate.SetParent(prefabWindow);
           activeVesselsTemplate.gameObject.SetActive(false);
-          var buttons = content.FindChild("Buttons");
+          var buttons = content.Find("Buttons");
           InitButton(buttons, "Recover", OnRecoverAll);
           InitButton(buttons, "Select", OnSelectAll);
           InitButton(buttons, "Deselect", OnDeselectAll);

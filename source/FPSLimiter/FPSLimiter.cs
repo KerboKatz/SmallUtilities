@@ -29,7 +29,7 @@ namespace KerboKatz.FPSL
       modName = "FPSLimiter";
       displayName = "FPS Limiter";
       settingsUIName = "FPSLimiter";
-      requiresUtilities = new Version(1, 4, 6);
+      requiresUtilities = new Version(1, 5, 2);
       ToolbarBase.instance.Add(this);
       LoadSettings("SmallUtilities/FPSLimiter", "Settings");
       Log("Init done!");
@@ -69,8 +69,8 @@ namespace KerboKatz.FPSL
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       var prefabWindow = uiWindow.gameObject.transform as RectTransform;
-      var content = prefabWindow.FindChild("Content");
-      currentFPSLabel = InitTextField(content.FindChild("CurrentFPS"), "Label", "");
+      var content = prefabWindow.Find("Content");
+      currentFPSLabel = InitTextField(content.Find("CurrentFPS"), "Label", "");
       InitInputField(content, "ActiveFPS", settings.active.ToString(), OnActiveFPSChange);
       InitInputField(content, "BackgroundFPS", settings.background.ToString(), OnBackgroundFPSChange);
       InitToggle(content, "VSync", settings.useVSync, OnVSyncChange).transform.parent.gameObject.SetActive(false);//in 1.2.2 changing the vsync option causes the main menu not to show up!

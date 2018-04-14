@@ -13,7 +13,7 @@ namespace KerboKatz.MEP
     {
       modName = "ModifiedExplosionPotential";
       displayName = "Modified Explosion Potential";
-      requiresUtilities = new Version(1, 4, 0);
+      requiresUtilities = new Version(1, 5, 2);
       Log("Init done!");
     }
 

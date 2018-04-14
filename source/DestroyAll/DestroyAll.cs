@@ -64,12 +64,12 @@ namespace KerboKatz.DA
     protected override void OnUIElemntInit(UIData uiWindow)
     {
       var prefabWindow = uiWindow.gameObject.transform as RectTransform;
-      var content = prefabWindow.FindChild("Content");
+      var content = prefabWindow.Find("Content");
       switch (uiWindow.name)
       {
         case "DestroyAllSettings":
           settingsWindow = uiWindow;
-          var typeTemplate = content.FindChild("Template");
+          var typeTemplate = content.Find("Template");
           typeTemplate.SetParent(prefabWindow);
           typeTemplate.gameObject.SetActive(false);
           InitToggle(content, "IncludePrelaunch", settings.includePrelaunch, (arg0) =>
@@ -102,13 +102,13 @@ namespace KerboKatz.DA
 
         case "DestroyAll":
           vesselWindow = uiWindow;
-          var scrollView = content.FindChild("Scroll View");
-          var viewport = scrollView.FindChild("Viewport");
-          vesselContainer = viewport.FindChild("VesselContainer");
-          activeVesselsTemplate = vesselContainer.FindChild("Template");
+          var scrollView = content.Find("Scroll View");
+          var viewport = scrollView.Find("Viewport");
+          vesselContainer = viewport.Find("VesselContainer");
+          activeVesselsTemplate = vesselContainer.Find("Template");
           activeVesselsTemplate.SetParent(prefabWindow);
           activeVesselsTemplate.gameObject.SetActive(false);
-          var buttons = content.FindChild("Buttons");
+          var buttons = content.Find("Buttons");
           InitButton(buttons, "Destroy", OnDestroyAll);
           InitButton(buttons, "Select", OnSelectAll);
           InitButton(buttons, "Deselect", OnDeselectAll);
